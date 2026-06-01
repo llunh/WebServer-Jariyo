@@ -1,0 +1,9 @@
+.metadata/
+Servers/
+build/
+bin/
+target/
+.project
+.settings/
+.classpath
+*.jar
