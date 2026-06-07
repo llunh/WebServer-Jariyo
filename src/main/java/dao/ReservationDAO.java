@@ -71,7 +71,9 @@ public class ReservationDAO {
         PreparedStatement pstmt  = null;
         boolean           result = false;
 
-        String sql = "UPDATE reservations SET status = 'CANCELLED' WHERE id = ? AND user_id = ?";
+        String sql = "UPDATE reservations SET status = 'CANCELLED' " +
+                     "WHERE id = ? AND user_id = ? " +
+                     "AND CONCAT(reservation_date, ' ', reservation_time) > NOW()";
 
         try {
             conn  = DBConnection.getConnection();

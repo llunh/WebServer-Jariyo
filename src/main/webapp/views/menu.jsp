@@ -9,7 +9,7 @@
   <div class="container">
     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 
-      <a href="<c:url value='/ReviewListAction.do?pageNum=1'/>"
+      <a href="<c:url value='/RestaurantList.do'/>"
          class="d-flex align-items-center text-dark text-decoration-none me-3">
         <span class="fs-4">🍽 자리요</span>
       </a>

@@ -74,12 +74,16 @@ public class ReservationController extends HttpServlet {
     private void requestCancel(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session      = request.getSession(false);
-        UserDTO     loginUser    = (UserDTO) session.getAttribute("loginUser");
+        HttpSession session       = request.getSession(false);
+        UserDTO     loginUser     = (UserDTO) session.getAttribute("loginUser");
         int         reservationId = Integer.parseInt(request.getParameter("reservationId"));
 
-        ReservationDAO.getInstance().cancelReservation(reservationId, loginUser.getId());
+        boolean ok = ReservationDAO.getInstance().cancelReservation(reservationId, loginUser.getId());
 
-        response.sendRedirect(request.getContextPath() + "/MemberMyPage.do");
+        if (ok) {
+            response.sendRedirect(request.getContextPath() + "/MemberMyPage.do");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/MemberMyPage.do?cancelError=past");
+        }
     }
 }
