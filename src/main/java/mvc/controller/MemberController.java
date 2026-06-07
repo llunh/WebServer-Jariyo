@@ -10,6 +10,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import mvc.model.UserDAO;
 import mvc.model.UserDTO;
+import dao.ReservationDAO;
+import dto.ReservationDTO;
+import java.util.ArrayList;
 
 public class MemberController extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -47,7 +50,10 @@ public class MemberController extends HttpServlet {
             requestLogout(request, response);
 
         } else if (command.equals("/MemberMyPage.do")) {
-            // 마이페이지 출력
+            // 마이페이지 — 예약 내역 조회 후 전달
+            UserDTO loginUser = (UserDTO) request.getSession(false).getAttribute("loginUser");
+            ArrayList<ReservationDTO> reservations = ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId());
+            request.setAttribute("reservations", reservations);
             RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
             rd.forward(request, response);
 
@@ -153,7 +159,7 @@ public class MemberController extends HttpServlet {
             response.addCookie(cookie);
         }
 
-        response.sendRedirect(request.getContextPath() + "/ReviewListAction.do?pageNum=1");
+        response.sendRedirect(request.getContextPath() + "/RestaurantList.do");
     }
 
     // 로그아웃 처리

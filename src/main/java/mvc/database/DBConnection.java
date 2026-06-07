@@ -14,7 +14,7 @@ public class DBConnection {
                 + "?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8"
                 + "&allowPublicKeyRetrieval=true"; 
         String user     = "root";
-        String password = "root";  // 본인 MySQL 비밀번호로 변경
+        String password = "1234";
 
         Class.forName("com.mysql.cj.jdbc.Driver");
         conn = DriverManager.getConnection(url, user, password);

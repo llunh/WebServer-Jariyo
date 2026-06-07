@@ -38,6 +38,9 @@
         </c:choose>
 
         <li class="nav-item">
+          <a class="nav-link" href="<c:url value='/RestaurantList.do'/>">식당 목록</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="<c:url value='/ReviewListAction.do?pageNum=1'/>">리뷰 목록</a>
         </li>
         <li class="nav-item">
