@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page contentType="text/html; charset=utf-8" errorPage="/views/error500.jsp"%>
 <%@ page import="java.util.*"%>
 <%@ page import="mvc.model.RestaurantDTO"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>

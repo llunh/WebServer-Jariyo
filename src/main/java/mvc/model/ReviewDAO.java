@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import mvc.database.DBConnection;
+import mvc.model.ReviewLikeDAO;  // 추가
 
 public class ReviewDAO {
 
@@ -88,6 +89,7 @@ public class ReviewDAO {
                 review.setUsername(rs.getString("nickname"));
                 review.setRestaurantName(rs.getString("restaurant_name"));
                 review.setImages(getImagesByReviewId(rs.getInt("id")));
+                review.setLikeCount(ReviewLikeDAO.getInstance().getLikeCount(rs.getInt("id")));
                 list.add(review);
 
                 if (index < (start + limit) && index <= total_record)
@@ -202,14 +204,13 @@ public class ReviewDAO {
         }
         return result;
     }
-    
- // 리뷰 삭제
+
+    // 리뷰 삭제
     public boolean deleteReview(int reviewId, int userId) {
         Connection        conn   = null;
         PreparedStatement pstmt  = null;
         boolean           result = false;
 
-        // 본인 리뷰만 삭제 가능하도록 user_id 조건 추가
         String sql = "DELETE FROM reviews WHERE id = ? AND user_id = ?";
 
         try {

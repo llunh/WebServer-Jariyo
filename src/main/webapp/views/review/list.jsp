@@ -1,21 +1,22 @@
-<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page contentType="text/html; charset=utf-8" errorPage="/views/error500.jsp"%>
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ page import="java.util.*"%>
 <%@ page import="mvc.model.ReviewDTO"%>
 <%@ page import="mvc.model.ReviewImageDTO"%>
+<%@ page import="mvc.model.ReviewLikeDAO"%>
 <%@ page import="mvc.model.UserDTO"%>
 
 <fmt:setLocale value="${lang}" />
 <fmt:setBundle basename="bundle.messages" />
 
 <%
-    String sessionId    = (String) session.getAttribute("sessionId");
-    UserDTO loginUser   = (UserDTO) session.getAttribute("loginUser");
-    List   reviewList   = (List)   request.getAttribute("reviewList");
-    int    total_record = ((Integer) request.getAttribute("total_record")).intValue();
-    int    pageNum      = ((Integer) request.getAttribute("pageNum")).intValue();
-    int    total_page   = ((Integer) request.getAttribute("total_page")).intValue();
+    String  sessionId    = (String)  session.getAttribute("sessionId");
+    UserDTO loginUser    = (UserDTO) session.getAttribute("loginUser");
+    List    reviewList   = (List)    request.getAttribute("reviewList");
+    int     total_record = ((Integer) request.getAttribute("total_record")).intValue();
+    int     pageNum      = ((Integer) request.getAttribute("pageNum")).intValue();
+    int     total_page   = ((Integer) request.getAttribute("total_page")).intValue();
 %>
 <html>
 <head>
@@ -94,6 +95,34 @@
                         }
                     }
                 %>
+
+                <%-- 좋아요 버튼 --%>
+                <div class="mt-2 d-flex align-items-center gap-2">
+                    <%
+                        boolean liked = false;
+                        if (loginUser != null) {
+                            liked = ReviewLikeDAO.getInstance().isLiked(review.getId(), loginUser.getId());
+                        }
+                        String likeClass = liked ? "btn-danger" : "btn-outline-danger";
+                        String likeText  = liked ? "좋아요 취소" : "좋아요";
+                    %>
+                    <%
+                        if (loginUser != null) {
+                    %>
+                        <a href="<%=request.getContextPath()%>/ReviewLikeAction.do?reviewId=<%=review.getId()%>&pageNum=<%=pageNum%>"
+                           class="btn btn-sm <%=likeClass%>">
+                            &#10084; <%=likeText%> (<%=review.getLikeCount()%>)
+                        </a>
+                    <%
+                        } else {
+                    %>
+                        <span class="btn btn-sm btn-outline-danger disabled">
+                            &#10084; 좋아요 (<%=review.getLikeCount()%>)
+                        </span>
+                    <%
+                        }
+                    %>
+                </div>
 
                 <%-- 본인 리뷰일 때만 삭제 버튼 표시 --%>
                 <%

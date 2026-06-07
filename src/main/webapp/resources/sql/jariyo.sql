@@ -39,3 +39,14 @@ DESC restaurants;
 USE JariyoDB;
 
 SELECT id, username, nickname, email, created_at FROM users;
+
+CREATE TABLE IF NOT EXISTS review_likes (
+    id         INT NOT NULL AUTO_INCREMENT,
+    review_id  INT NOT NULL,
+    user_id    INT NOT NULL,
+    created_at DATETIME DEFAULT NOW(),
+    PRIMARY KEY (id),
+    UNIQUE KEY unique_like (review_id, user_id),  -- 중복 좋아요 방지
+    FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id)   REFERENCES users(id)   ON DELETE CASCADE
+) DEFAULT CHARSET=utf8mb4;

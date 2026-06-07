@@ -10,9 +10,10 @@ public class ReviewDTO {
     private int    rating;
     private String content;
     private String createdAt;
-    private String username;        // JOIN용 (닉네임 표시)
-    private String restaurantName;  // JOIN용
+    private String username;
+    private String restaurantName;
     private List<ReviewImageDTO> images;
+    private int    likeCount;
 
     public ReviewDTO() {
         super();
@@ -44,4 +45,7 @@ public class ReviewDTO {
 
     public List<ReviewImageDTO> getImages()             { return images; }
     public void setImages(List<ReviewImageDTO> images)  { this.images = images; }
+
+    public int getLikeCount()                           { return likeCount; }
+    public void setLikeCount(int likeCount)             { this.likeCount = likeCount; }
 }

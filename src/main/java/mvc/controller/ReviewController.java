@@ -19,6 +19,7 @@ import jakarta.servlet.http.Part;
 import mvc.model.ReviewDAO;
 import mvc.model.ReviewDTO;
 import mvc.model.ReviewImageDTO;
+import mvc.model.ReviewLikeDAO;
 import mvc.model.UserDTO;
 import mvc.model.RestaurantDAO;
 
@@ -62,6 +63,9 @@ public class ReviewController extends HttpServlet {
 
         } else if (command.equals("/ReviewDeleteAction.do")) {
             requestReviewDelete(request, response);
+
+        } else if (command.equals("/ReviewLikeAction.do")) {
+            requestReviewLike(request, response);
         }
     }
 
@@ -74,6 +78,7 @@ public class ReviewController extends HttpServlet {
         if (request.getParameter("pageNum") != null)
             pageNum = Integer.parseInt(request.getParameter("pageNum"));
 
+        // 다국어 처리
         HttpSession session = request.getSession();
         String lang = request.getParameter("lang");
         if (lang != null && !lang.isEmpty()) {
@@ -185,5 +190,28 @@ public class ReviewController extends HttpServlet {
         } else {
             response.sendRedirect(request.getContextPath() + "/ReviewListAction.do?pageNum=1&error=delete");
         }
+    }
+
+    // 좋아요 처리
+    public void requestReviewLike(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session   = request.getSession(false);
+        UserDTO     loginUser = (UserDTO) session.getAttribute("loginUser");
+
+        int reviewId = Integer.parseInt(request.getParameter("reviewId"));
+        int pageNum  = Integer.parseInt(request.getParameter("pageNum"));
+
+        ReviewLikeDAO likeDAO = ReviewLikeDAO.getInstance();
+
+        // 이미 좋아요 눌렀으면 취소, 아니면 추가
+        if (likeDAO.isLiked(reviewId, loginUser.getId())) {
+            likeDAO.removeLike(reviewId, loginUser.getId());
+        } else {
+            likeDAO.addLike(reviewId, loginUser.getId());
+        }
+
+        response.sendRedirect(request.getContextPath()
+                + "/ReviewListAction.do?pageNum=" + pageNum);
     }
 }
