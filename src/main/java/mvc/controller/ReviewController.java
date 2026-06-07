@@ -52,8 +52,8 @@ public class ReviewController extends HttpServlet {
             rd.forward(request, response);
 
         } else if (command.equals("/ReviewWriteForm.do")) {
-            RestaurantDAO restaurantDAO = RestaurantDAO.getInstance();
-            request.setAttribute("restaurantList", restaurantDAO.getAllRestaurants());
+            UserDTO loginUser = (UserDTO) request.getSession(false).getAttribute("loginUser");
+            request.setAttribute("restaurantList", RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
             RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
             rd.forward(request, response);
 
@@ -110,8 +110,29 @@ public class ReviewController extends HttpServlet {
         String restaurantIdStr = request.getParameter("restaurantId");
         String ratingStr       = request.getParameter("rating");
 
+        // 식당 선택 여부 확인
+        if (restaurantIdStr == null || restaurantIdStr.isEmpty()) {
+            request.setAttribute("error", "식당을 선택해 주세요.");
+            request.setAttribute("restaurantList", RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
+            RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
+            rd.forward(request, response);
+            return;
+        }
+
+        int restaurantId = Integer.parseInt(restaurantIdStr);
+
+        // 방문 여부 서버 사이드 검증 — 예약 후 방문한 식당만 허용
+        if (!RestaurantDAO.getInstance().hasVisited(loginUser.getId(), restaurantId)) {
+            request.setAttribute("error", "예약 후 방문한 식당에만 리뷰를 작성할 수 있습니다.");
+            request.setAttribute("restaurantList", RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
+            RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
+            rd.forward(request, response);
+            return;
+        }
+
         if (content.isEmpty() || content.length() > 1000) {
             request.setAttribute("error", "리뷰 내용을 1~1000자로 입력해 주세요.");
+            request.setAttribute("restaurantList", RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
             RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
             rd.forward(request, response);
             return;
@@ -136,6 +157,7 @@ public class ReviewController extends HttpServlet {
 
             if (!allowedExt.contains(ext)) {
                 request.setAttribute("error", "이미지 파일(jpg, png, gif, webp)만 업로드 가능합니다.");
+                request.setAttribute("restaurantList", RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
                 RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
                 rd.forward(request, response);
                 return;
@@ -152,7 +174,7 @@ public class ReviewController extends HttpServlet {
 
         ReviewDTO review = new ReviewDTO();
         review.setUserId(loginUser.getId());
-        review.setRestaurantId(Integer.parseInt(restaurantIdStr));
+        review.setRestaurantId(restaurantId);
         review.setRating(Integer.parseInt(ratingStr));
         review.setContent(content);
 
@@ -163,6 +185,7 @@ public class ReviewController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/ReviewListAction.do?pageNum=1");
         } else {
             request.setAttribute("error", "리뷰 저장에 실패했습니다. 다시 시도해 주세요.");
+            request.setAttribute("restaurantList", RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
             RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
             rd.forward(request, response);
         }
