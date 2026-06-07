@@ -8,5 +8,6 @@ CREATE TABLE restaurants (
 ALTER TABLE restaurants add column phone varchar(20) not null;
 ALTER TABLE restaurants add column opening_hours varchar(100) not null;
 ALTER TABLE restaurants add column is_active boolean not null;
-
+ALTER TABLE restaurants ADD COLUMN image_filename VARCHAR(255);
+ALTER TABLE restaurants ADD COLUMN max_capacity INT NOT NULL DEFAULT 10;
 desc restaurants;
