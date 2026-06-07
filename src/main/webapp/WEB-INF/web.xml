@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:web="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd
+                             http://xmlns.jcp.org/xml/ns/javaee
+                             http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         id="WebApp_ID" version="6.0">
+
+  <!-- ===== 인코딩 필터 ===== -->
+  <filter>
+    <filter-name>EncodingFilter</filter-name>
+    <filter-class>filter.EncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- ===== 로그인 필터 ===== -->
+  <filter>
+    <filter-name>LoginFilter</filter-name>
+    <filter-class>filter.LoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>/ReviewWriteForm.do</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>/ReviewWriteAction.do</url-pattern>
+  </filter-mapping>
+
+  <!-- ===== MemberController ===== -->
+  <servlet>
+    <servlet-name>MemberController</servlet-name>
+    <servlet-class>mvc.controller.MemberController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MemberController</servlet-name>
+    <url-pattern>/MemberRegisterForm.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>MemberController</servlet-name>
+    <url-pattern>/MemberRegisterAction.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>MemberController</servlet-name>
+    <url-pattern>/MemberLoginForm.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>MemberController</servlet-name>
+    <url-pattern>/MemberLoginAction.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>MemberController</servlet-name>
+    <url-pattern>/MemberLogoutAction.do</url-pattern>
+  </servlet-mapping>
+<servlet-mapping>
+    <servlet-name>MemberController</servlet-name>
+    <url-pattern>/MemberMyPage.do</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+    <servlet-name>MemberController</servlet-name>
+    <url-pattern>/MemberDeleteAction.do</url-pattern>
+</servlet-mapping>
+
+  <!-- ===== ReviewController ===== -->
+  <servlet>
+    <servlet-name>ReviewController</servlet-name>
+    <servlet-class>mvc.controller.ReviewController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ReviewController</servlet-name>
+    <url-pattern>/ReviewListAction.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ReviewController</servlet-name>
+    <url-pattern>/ReviewWriteForm.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ReviewController</servlet-name>
+    <url-pattern>/ReviewWriteAction.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ReviewController</servlet-name>
+    <url-pattern>/ReviewDeleteAction.do</url-pattern>
+</servlet-mapping>
+
+  <!-- ===== 오류 페이지 ===== -->
+  <error-page>
+    <error-code>404</error-code>
+    <location>/views/error404.jsp</location>
+  </error-page>
+
+  <!-- ===== 세션 타임아웃: 30분 ===== -->
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+
+  <!-- ===== 시작 페이지 ===== -->
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+</web-app>
