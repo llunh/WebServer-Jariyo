@@ -8,8 +8,9 @@ public class ReservationDTO {
     private String reservationTime;
     private int partySize;
     private String status;
-    
-    
+    private String restaurantName;
+
+
     public int getId() {return id;}
     public void setId(int id) { this.id = id; }
     
@@ -30,5 +31,8 @@ public class ReservationDTO {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getRestaurantName() { return restaurantName; }
+    public void setRestaurantName(String restaurantName) { this.restaurantName = restaurantName; }
 }
 

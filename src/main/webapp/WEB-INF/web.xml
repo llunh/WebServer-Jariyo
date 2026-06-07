@@ -43,6 +43,10 @@
     <filter-name>LoginFilter</filter-name>
     <url-pattern>/ReservationAction.do</url-pattern>
   </filter-mapping>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>/ReservationCancelAction.do</url-pattern>
+  </filter-mapping>
 
   <!-- ===== MemberController ===== -->
   <servlet>
@@ -100,6 +104,10 @@
 <servlet-mapping>
     <servlet-name>ReservationController</servlet-name>
     <url-pattern>/ReservationAction.do</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+    <servlet-name>ReservationController</servlet-name>
+    <url-pattern>/ReservationCancelAction.do</url-pattern>
 </servlet-mapping>
 
   <!-- ===== ReviewController ===== -->

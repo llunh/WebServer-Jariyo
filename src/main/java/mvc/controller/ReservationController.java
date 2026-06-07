@@ -33,6 +33,9 @@ public class ReservationController extends HttpServlet {
 
         if (command.equals("/ReservationAction.do")) {
             requestReservation(request, response);
+
+        } else if (command.equals("/ReservationCancelAction.do")) {
+            requestCancel(request, response);
         }
     }
 
@@ -65,5 +68,18 @@ public class ReservationController extends HttpServlet {
 
         RequestDispatcher rd = request.getRequestDispatcher("/views/reservation/result.jsp");
         rd.forward(request, response);
+    }
+
+    // 예약 취소 처리 — 취소 후 마이페이지로 이동
+    private void requestCancel(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session      = request.getSession(false);
+        UserDTO     loginUser    = (UserDTO) session.getAttribute("loginUser");
+        int         reservationId = Integer.parseInt(request.getParameter("reservationId"));
+
+        ReservationDAO.getInstance().cancelReservation(reservationId, loginUser.getId());
+
+        response.sendRedirect(request.getContextPath() + "/MemberMyPage.do");
     }
 }

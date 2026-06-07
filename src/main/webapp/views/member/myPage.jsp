@@ -1,8 +1,10 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="mvc.model.UserDTO"%>
+<%@ page import="dto.ReservationDTO, java.util.ArrayList"%>
 <%
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
+    ArrayList<ReservationDTO> reservations = (ArrayList<ReservationDTO>) request.getAttribute("reservations");
     if (loginUser == null) {
         response.sendRedirect(request.getContextPath() + "/MemberLoginForm.do");
         return;
@@ -35,6 +37,47 @@
                 <p><strong>닉네임:</strong> <%=loginUser.getNickname()%></p>
                 <p><strong>이메일:</strong> <%=loginUser.getEmail()%></p>
                 <p><strong>가입일:</strong> <%=loginUser.getCreatedAt()%></p>
+            </div>
+        </div>
+
+        <%-- 예약 내역 --%>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">예약 내역</h5>
+                <% if (reservations == null || reservations.isEmpty()) { %>
+                    <p class="text-muted">예약 내역이 없습니다.</p>
+                <% } else { %>
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>식당</th>
+                                <th>날짜</th>
+                                <th>시간</th>
+                                <th>인원</th>
+                                <th>상태</th>
+                                <th>예약취소</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (ReservationDTO r : reservations) { %>
+                            <tr>
+                                <td><%= r.getRestaurantName() %></td>
+                                <td><%= r.getReservationDate() %></td>
+                                <td><%= r.getReservationTime() %></td>
+                                <td><%= r.getPartySize() %>명</td>
+                                <td><%= "CONFIRMED".equals(r.getStatus()) ? "예약확정" : "취소됨" %></td>
+                                <td>
+                                    <% if ("CONFIRMED".equals(r.getStatus())) { %>
+                                    <a href="<%= request.getContextPath() %>/ReservationCancelAction.do?reservationId=<%= r.getId() %>"
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('예약을 취소하시겠습니까?')">취소</a>
+                                    <% } %>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                <% } %>
             </div>
         </div>
 
