@@ -6,6 +6,6 @@ CREATE TABLE IF NOT EXISTS users (
     nickname    VARCHAR(50)  NOT NULL          COMMENT '서비스 내 닉네임',
     created_at  DATETIME     DEFAULT NOW()     COMMENT '가입 일시',
     updated_at  DATETIME     DEFAULT NOW() ON UPDATE NOW() COMMENT '수정 일시'
-) 
+) ;
 
 desc users;

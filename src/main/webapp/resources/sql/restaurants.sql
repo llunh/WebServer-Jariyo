@@ -10,3 +10,5 @@ ALTER TABLE restaurants add column opening_hours varchar(100) not null;
 ALTER TABLE restaurants add column is_active boolean not null;
 
 desc restaurants;
+
+USE JariyoDB;
