@@ -35,6 +35,14 @@
     <filter-name>LoginFilter</filter-name>
     <url-pattern>/ReviewWriteAction.do</url-pattern>
   </filter-mapping>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>/reservationForm.jsp</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>/ReservationAction.do</url-pattern>
+  </filter-mapping>
 
   <!-- ===== MemberController ===== -->
   <servlet>
@@ -68,6 +76,30 @@
 <servlet-mapping>
     <servlet-name>MemberController</servlet-name>
     <url-pattern>/MemberDeleteAction.do</url-pattern>
+</servlet-mapping>
+
+  <!-- ===== RestaurantController ===== -->
+  <servlet>
+    <servlet-name>RestaurantController</servlet-name>
+    <servlet-class>mvc.controller.RestaurantController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RestaurantController</servlet-name>
+    <url-pattern>/RestaurantList.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>RestaurantController</servlet-name>
+    <url-pattern>/RestaurantDetail.do</url-pattern>
+  </servlet-mapping>
+  
+   <!-- ===== ReservationController ===== -->
+<servlet>
+    <servlet-name>ReservationController</servlet-name>
+    <servlet-class>mvc.controller.ReservationController</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>ReservationController</servlet-name>
+    <url-pattern>/ReservationAction.do</url-pattern>
 </servlet-mapping>
 
   <!-- ===== ReviewController ===== -->

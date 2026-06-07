@@ -53,8 +53,8 @@ public class ReservationDAO {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
-        String sql = "INSERT INTO reservations (restaurant_id, reservation_date, reservation_time, party_size, status) "
-                   + "VALUES (?, ?, ?, ?, 'CONFIRMED')";
+        String sql = "INSERT INTO reservations (user_id, restaurant_id, reservation_date, reservation_time, party_size, status) "
+                   + "VALUES (?, ?, ?, ?, ?, 'CONFIRMED')";
 
         try {
             conn = DBConnection.getConnection();
@@ -67,10 +67,11 @@ public class ReservationDAO {
             }
 
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, r.getRestaurantId());
-            pstmt.setString(2, r.getReservationDate());
-            pstmt.setString(3, r.getReservationTime());
-            pstmt.setInt(4, r.getPartySize());
+            pstmt.setInt(1, r.getUserId());
+            pstmt.setInt(2, r.getRestaurantId());
+            pstmt.setString(3, r.getReservationDate());
+            pstmt.setString(4, r.getReservationTime());
+            pstmt.setInt(5, r.getPartySize());
             pstmt.executeUpdate();
             return 1;
         } catch (Exception ex) {

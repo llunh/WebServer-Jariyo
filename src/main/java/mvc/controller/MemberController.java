@@ -153,7 +153,7 @@ public class MemberController extends HttpServlet {
             response.addCookie(cookie);
         }
 
-        response.sendRedirect(request.getContextPath() + "/ReviewListAction.do?pageNum=1");
+        response.sendRedirect(request.getContextPath() + "/RestaurantList.do");
     }
 
     // 로그아웃 처리

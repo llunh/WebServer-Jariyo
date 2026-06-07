@@ -2,7 +2,7 @@ package dto;
 
 public class ReservationDTO {
     private int id;
-    // user_id -> 로그인 기능 구현된 후에 
+    private int userId;
     private int restaurantId;
     private String reservationDate;
     private String reservationTime;
@@ -13,8 +13,9 @@ public class ReservationDTO {
     public int getId() {return id;}
     public void setId(int id) { this.id = id; }
     
-    // getter, setter -> user_id
-    
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
+
     public int getRestaurantId() {return restaurantId;}
     public void setRestaurantId(int restaurantId) { this.restaurantId = restaurantId; }
     
