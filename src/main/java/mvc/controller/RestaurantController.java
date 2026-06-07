@@ -56,13 +56,15 @@ public class RestaurantController extends HttpServlet {
             throws ServletException, IOException {
 
         int id = Integer.parseInt(request.getParameter("id"));
-        RestaurantDTO        restaurant = RestaurantDAO.getInstance().getRestaurantById(id);
-        ArrayList<MenuDTO>   menus      = MenuDAO.getInstance().getMenusByRestaurantId(id);
+
+        RestaurantDTO      restaurant = RestaurantDAO.getInstance().getRestaurantById(id);
+        ArrayList<MenuDTO> menus      = MenuDAO.getInstance().getMenusByRestaurantId(id);
 
         request.setAttribute("restaurant", restaurant);
         request.setAttribute("menus",      menus);
 
-        RequestDispatcher rd = request.getRequestDispatcher("/views/restaurant/detail.jsp");
+        // restaurantDetail.jsp로 포워딩 (리뷰, 관심식당 기능 포함)
+        RequestDispatcher rd = request.getRequestDispatcher("/restaurantDetail.jsp");
         rd.forward(request, response);
     }
 }

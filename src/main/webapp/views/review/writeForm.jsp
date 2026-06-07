@@ -1,9 +1,12 @@
-<%@ page contentType="text/html; charset=utf-8" errorPage="/views/error500.jsp"%>
+<%@ page contentType="text/html; charset=utf-8"%>
 <%@ page import="java.util.*"%>
 <%@ page import="mvc.model.RestaurantDTO"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
     String sessionId = (String) session.getAttribute("sessionId");
+    List<RestaurantDTO> restaurantList =
+        (List<RestaurantDTO>) request.getAttribute("restaurantList");
+    boolean hasVisited = (restaurantList != null && !restaurantList.isEmpty());
 %>
 <html>
 <head>
@@ -59,6 +62,15 @@
             <div class="alert alert-danger">${error}</div>
         </c:if>
 
+        <% if (!hasVisited) { %>
+        <div class="alert alert-info">
+            방문한 식당이 없습니다.<br>
+            예약 시간이 지난 후에 해당 식당에 리뷰를 작성할 수 있습니다.
+        </div>
+        <a href="<c:url value='/ReviewListAction.do?pageNum=1'/>"
+           class="btn btn-outline-secondary">목록으로</a>
+        <% } else { %>
+
         <form name="writeForm"
               action="<c:url value='/ReviewWriteAction.do'/>"
               method="post"
@@ -70,19 +82,11 @@
                 <div class="col-sm-9">
                     <select name="restaurantId" class="form-select">
                         <option value="">-- 식당을 선택해 주세요 --</option>
-                        <%
-                            List<RestaurantDTO> restaurantList =
-                                (List<RestaurantDTO>) request.getAttribute("restaurantList");
-                            if (restaurantList != null) {
-                                for (RestaurantDTO r : restaurantList) {
-                        %>
+                        <% for (RestaurantDTO r : restaurantList) { %>
                             <option value="<%=r.getId()%>">
                                 <%=r.getName()%> (<%=r.getCategory()%>)
                             </option>
-                        <%
-                                }
-                            }
-                        %>
+                        <% } %>
                     </select>
                 </div>
             </div>
@@ -129,6 +133,7 @@
                 </div>
             </div>
         </form>
+        <% } %>
       </div>
     </div>
 </div>

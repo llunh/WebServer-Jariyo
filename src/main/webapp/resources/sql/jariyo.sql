@@ -40,13 +40,7 @@ USE JariyoDB;
 
 SELECT id, username, nickname, email, created_at FROM users;
 
-CREATE TABLE IF NOT EXISTS review_likes (
-    id         INT NOT NULL AUTO_INCREMENT,
-    review_id  INT NOT NULL,
-    user_id    INT NOT NULL,
-    created_at DATETIME DEFAULT NOW(),
-    PRIMARY KEY (id),
-    UNIQUE KEY unique_like (review_id, user_id),  -- 중복 좋아요 방지
-    FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id)   REFERENCES users(id)   ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO reviews (user_id, restaurant_id, rating, content)
+VALUES (1, 1, 5, '한우마을 정말 맛있어요! 고기가 너무 부드럽고 서비스도 좋았습니다.');
+

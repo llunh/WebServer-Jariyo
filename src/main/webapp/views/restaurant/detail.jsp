@@ -56,7 +56,7 @@
         <input type="hidden" name="restaurantId" value="<%= restaurant.getId() %>">
         <div class="mb-3">
             <label>날짜</label>
-            <input type="date" name="date" class="form-control" min="<%= java.time.LocalDate.now() %>">
+            <input type="date" id="reservationDate" name="date" class="form-control" min="<%= java.time.LocalDate.now() %>">
         </div>
         <div class="mb-3">
             <label>시간</label>
@@ -67,7 +67,7 @@
                 int      endHour     = Integer.parseInt(timeRange[1].split(":")[0]);
                 if (startMinute > 0) startHour++;
             %>
-            <select name="time" class="form-control">
+            <select id="timeSelect" name="time" class="form-control">
                 <% for (int h = startHour; h < endHour; h++) { %>
                 <option><%= String.format("%02d:00", h) %></option>
                 <% } %>
@@ -80,5 +80,37 @@
         <button type="submit" class="btn btn-primary">예약 신청</button>
     </form>
 </div>
+<script>
+function filterPastTimes() {
+    var dateInput  = document.getElementById('reservationDate');
+    var timeSelect = document.getElementById('timeSelect');
+    var today      = new Date();
+    var todayStr   = today.getFullYear() + '-'
+                   + String(today.getMonth() + 1).padStart(2, '0') + '-'
+                   + String(today.getDate()).padStart(2, '0');
+    var options    = timeSelect.options;
+
+    for (var i = 0; i < options.length; i++) {
+        var optionHour = parseInt(options[i].value.split(':')[0]);
+        // 오늘 날짜이고 해당 시간이 현재 시각 이하이면 숨김
+        var isPast = (dateInput.value === todayStr) && (optionHour <= today.getHours());
+        options[i].style.display = isPast ? 'none' : '';
+        options[i].disabled      = isPast;
+    }
+
+    // 숨겨진 옵션이 선택된 경우 첫 번째 활성 옵션으로 이동
+    if (timeSelect.options[timeSelect.selectedIndex].disabled) {
+        for (var i = 0; i < options.length; i++) {
+            if (!options[i].disabled) {
+                timeSelect.selectedIndex = i;
+                break;
+            }
+        }
+    }
+}
+
+document.getElementById('reservationDate').addEventListener('change', filterPastTimes);
+filterPastTimes();
+</script>
 </body>
 </html>

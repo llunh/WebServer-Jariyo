@@ -44,6 +44,9 @@
         <div class="card mb-4">
             <div class="card-body">
                 <h5 class="card-title mb-3">예약 내역</h5>
+                <% if ("past".equals(request.getParameter("cancelError"))) { %>
+                    <div class="alert alert-danger">이미 지난 예약은 취소할 수 없습니다.</div>
+                <% } %>
                 <% if (reservations == null || reservations.isEmpty()) { %>
                     <p class="text-muted">예약 내역이 없습니다.</p>
                 <% } else { %>
@@ -59,7 +62,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% for (ReservationDTO r : reservations) { %>
+                            <% for (ReservationDTO r : reservations) {
+                                boolean isPast = false;
+                                if ("CONFIRMED".equals(r.getStatus())) {
+                                    // reservation_date("yyyy-MM-dd") + reservation_time("HH:mm:ss")을
+                                    // LocalDateTime으로 합쳐서 현재 시각과 비교
+                                    // isBefore(now) == true 이면 예약 시간이 이미 지난 것
+                                    java.time.LocalDateTime resDateTime = java.time.LocalDateTime.of(
+                                        java.time.LocalDate.parse(r.getReservationDate()),
+                                        java.time.LocalTime.parse(r.getReservationTime())
+                                    );
+                                    isPast = resDateTime.isBefore(java.time.LocalDateTime.now());
+                                }
+                            %>
                             <tr>
                                 <td><%= r.getRestaurantName() %></td>
                                 <td><%= r.getReservationDate() %></td>
@@ -67,11 +82,15 @@
                                 <td><%= r.getPartySize() %>명</td>
                                 <td><%= "CONFIRMED".equals(r.getStatus()) ? "예약확정" : "취소됨" %></td>
                                 <td>
-                                    <% if ("CONFIRMED".equals(r.getStatus())) { %>
+                                    <% if ("CONFIRMED".equals(r.getStatus())) {
+                                        if (isPast) { %>
+                                    <span class="text-muted small">방문완료</span>
+                                    <%  } else { %>
                                     <a href="<%= request.getContextPath() %>/ReservationCancelAction.do?reservationId=<%= r.getId() %>"
                                        class="btn btn-sm btn-danger"
                                        onclick="return confirm('예약을 취소하시겠습니까?')">취소</a>
-                                    <% } %>
+                                    <%  }
+                                       } %>
                                 </td>
                             </tr>
                             <% } %>
@@ -80,6 +99,42 @@
                 <% } %>
             </div>
         </div>
+        
+        <%@ page import="mvc.model.RestaurantDTO, java.util.ArrayList"%>
+<%
+    ArrayList<RestaurantDTO> favorites =
+        (ArrayList<RestaurantDTO>) request.getAttribute("favorites");
+%>
+
+<%-- 관심 식당 목록 --%>
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">관심 식당</h5>
+        <%
+            if (favorites == null || favorites.isEmpty()) {
+        %>
+            <p class="text-muted">관심 식당이 없습니다.</p>
+        <%
+            } else {
+                for (RestaurantDTO fav : favorites) {
+        %>
+            <div class="d-flex align-items-center border rounded p-2 mb-2">
+                <img src="<%=request.getContextPath()%>/resources/images/<%=fav.getImageFilename()%>"
+                     style="width:60px; height:60px; object-fit:cover; border-radius:4px;"
+                     class="me-3">
+                <div>
+                    <strong><%=fav.getName()%></strong>
+                    <p class="text-muted mb-0"><%=fav.getCategory()%> | <%=fav.getAddress()%></p>
+                </div>
+                <a href="<%=request.getContextPath()%>/RestaurantDetail.do?id=<%=fav.getId()%>"
+                   class="btn btn-sm btn-outline-primary ms-auto">상세보기</a>
+            </div>
+        <%
+                }
+            }
+        %>
+    </div>
+</div>
 
         <%-- 회원 탈퇴 --%>
         <div class="card border-danger">

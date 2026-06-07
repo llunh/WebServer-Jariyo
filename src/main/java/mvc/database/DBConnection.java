@@ -14,7 +14,7 @@ public class DBConnection {
                 + "?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8"
                 + "&allowPublicKeyRetrieval=true"; 
         String user     = "root";
-        String password = "1234";
+        String password = "root";
 
         Class.forName("com.mysql.cj.jdbc.Driver");
         conn = DriverManager.getConnection(url, user, password);

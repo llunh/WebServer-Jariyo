@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import mvc.database.DBConnection;
-import mvc.model.ReviewLikeDAO;  // 추가
+import mvc.model.ReviewLikeDAO;
 
 public class ReviewDAO {
 
@@ -204,13 +204,14 @@ public class ReviewDAO {
         }
         return result;
     }
-
-    // 리뷰 삭제
+    
+ // 리뷰 삭제
     public boolean deleteReview(int reviewId, int userId) {
         Connection        conn   = null;
         PreparedStatement pstmt  = null;
         boolean           result = false;
 
+        // 본인 리뷰만 삭제 가능하도록 user_id 조건 추가
         String sql = "DELETE FROM reviews WHERE id = ? AND user_id = ?";
 
         try {
@@ -230,5 +231,52 @@ public class ReviewDAO {
             }
         }
         return result;
+    }
+    
+ // 식당별 리뷰 목록 조회
+    public ArrayList<ReviewDTO> getReviewsByRestaurantId(int restaurantId) {
+        Connection        conn  = null;
+        PreparedStatement pstmt = null;
+        ResultSet         rs    = null;
+        ArrayList<ReviewDTO> list = new ArrayList<ReviewDTO>();
+
+        String sql =
+            "SELECT r.id, r.user_id, r.rating, r.content, " +
+            "       DATE_FORMAT(r.created_at, '%Y/%m/%d %H:%i') AS created_at, " +
+            "       u.nickname " +
+            "FROM reviews r " +
+            "JOIN users u ON r.user_id = u.id " +
+            "WHERE r.restaurant_id = ? " +
+            "ORDER BY r.id DESC";
+
+        try {
+            conn  = DBConnection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, restaurantId);
+            rs    = pstmt.executeQuery();
+            while (rs.next()) {
+                ReviewDTO review = new ReviewDTO();
+                review.setId(rs.getInt("id"));
+                review.setUserId(rs.getInt("user_id"));
+                review.setRating(rs.getInt("rating"));
+                review.setContent(rs.getString("content"));
+                review.setCreatedAt(rs.getString("created_at"));
+                review.setUsername(rs.getString("nickname"));
+                review.setImages(getImagesByReviewId(rs.getInt("id")));
+                review.setLikeCount(ReviewLikeDAO.getInstance().getLikeCount(rs.getInt("id")));
+                list.add(review);
+            }
+        } catch (Exception ex) {
+            System.out.println("getReviewsByRestaurantId() 예외발생: " + ex);
+        } finally {
+            try {
+                if (rs    != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (conn  != null) conn.close();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
+        }
+        return list;
     }
 }

@@ -8,14 +8,12 @@ import java.util.ArrayList;
 import database.DBConnection;
 import dto.ReservationDTO;
 
-// reservations 테이블 DB 처리를 담당하는 DAO — 싱글톤 패턴
 public class ReservationDAO {
 
     private static ReservationDAO instance;
 
     private ReservationDAO() {}
 
-    // 앱 전체에서 하나의 인스턴스만 사용
     public static ReservationDAO getInstance() {
         if (instance == null)
             instance = new ReservationDAO();
@@ -39,7 +37,6 @@ public class ReservationDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, userId);
             rs    = pstmt.executeQuery();
-
             while (rs.next()) {
                 ReservationDTO r = new ReservationDTO();
                 r.setId(rs.getInt("id"));
@@ -65,13 +62,103 @@ public class ReservationDAO {
         return list;
     }
 
-    // 예약 취소 — 본인 예약만 취소 가능하도록 user_id 조건 추가
+    // 같은 식당 + 날짜 + 시간대의 현재 예약 수 조회
+    private int getReservationCount(Connection conn, ReservationDTO r) throws Exception {
+        String sql = "SELECT COUNT(*) FROM reservations "
+                   + "WHERE restaurant_id = ? AND reservation_date = ? AND reservation_time = ? AND status = 'CONFIRMED'";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, r.getRestaurantId());
+        pstmt.setString(2, r.getReservationDate());
+        pstmt.setString(3, r.getReservationTime());
+        ResultSet rs = pstmt.executeQuery();
+        rs.next();
+        return rs.getInt(1);
+    }
+
+    // 해당 식당의 max_capacity 조회
+    private int getMaxCapacity(Connection conn, int restaurantId) throws Exception {
+        String sql = "SELECT max_capacity FROM restaurants WHERE id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, restaurantId);
+        ResultSet rs = pstmt.executeQuery();
+        rs.next();
+        return rs.getInt("max_capacity");
+    }
+
+    // 예약 INSERT — 트랜잭션 처리 — 1:성공 / 0:정원 초과 / -1:DB 오류
+    public int insertReservation(ReservationDTO r) {
+        Connection        conn  = null;
+        PreparedStatement pstmt = null;
+
+        String sql = "INSERT INTO reservations "
+                   + "(user_id, restaurant_id, reservation_date, reservation_time, party_size, status) "
+                   + "VALUES (?, ?, ?, ?, ?, 'CONFIRMED')";
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);  // 트랜잭션 시작
+
+            int currentCount = getReservationCount(conn, r);
+            int maxCapacity  = getMaxCapacity(conn, r.getRestaurantId());
+
+            if (currentCount >= maxCapacity) {
+                conn.rollback();
+                return 0;
+            }
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, r.getUserId());
+            pstmt.setInt(2, r.getRestaurantId());
+            pstmt.setString(3, r.getReservationDate());
+            pstmt.setString(4, r.getReservationTime());
+            pstmt.setInt(5, r.getPartySize());
+            pstmt.executeUpdate();
+
+            conn.commit();  // 커밋
+            return 1;
+
+        } catch (Exception ex) {
+            System.out.println("insertReservation() 예외발생: " + ex);
+            try { if (conn != null) conn.rollback(); } catch (Exception e) {}
+            return -1;
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn  != null) { conn.setAutoCommit(true); conn.close(); }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
+        }
+    }
+
+    // 예약 가능 여부 확인 (AJAX용)
+    public boolean isTimeAvailable(int restaurantId, String date, String time) {
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            ReservationDTO r = new ReservationDTO();
+            r.setRestaurantId(restaurantId);
+            r.setReservationDate(date);
+            r.setReservationTime(time);
+            int current = getReservationCount(conn, r);
+            int maxCap  = getMaxCapacity(conn, restaurantId);
+            return current < maxCap;
+        } catch (Exception e) {
+            System.out.println("isTimeAvailable() 예외: " + e);
+            return false;
+        } finally {
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+    }
+
+    // 예약 취소
     public boolean cancelReservation(int reservationId, int userId) {
         Connection        conn   = null;
         PreparedStatement pstmt  = null;
         boolean           result = false;
 
-        String sql = "UPDATE reservations SET status = 'CANCELLED' WHERE id = ? AND user_id = ?";
+        String sql = "UPDATE reservations SET status = 'CANCELLED' " +
+                     "WHERE id = ? AND user_id = ? " +
+                     "AND CONCAT(reservation_date, ' ', reservation_time) > NOW()";
 
         try {
             conn  = DBConnection.getConnection();
@@ -91,71 +178,4 @@ public class ReservationDAO {
         }
         return result;
     }
-
-    // 같은 식당 + 날짜 + 시간대의 현재 예약 수 조회
-    private int getReservationCount(Connection conn, ReservationDTO r) throws Exception {
-        String sql = "SELECT COUNT(*) FROM reservations "
-                   + "WHERE restaurant_id = ? AND reservation_date = ? AND reservation_time = ? AND status = 'CONFIRMED'";
-
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, r.getRestaurantId());
-        pstmt.setString(2, r.getReservationDate());
-        pstmt.setString(3, r.getReservationTime());
-
-        ResultSet rs = pstmt.executeQuery();
-        rs.next();
-        return rs.getInt(1);
-    }
-
-    // 해당 식당의 max_capacity 조회
-    private int getMaxCapacity(Connection conn, int restaurantId) throws Exception {
-        String sql = "SELECT max_capacity FROM restaurants WHERE id = ?";
-
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, restaurantId);
-
-        ResultSet rs = pstmt.executeQuery();
-        rs.next();
-        return rs.getInt("max_capacity");
-    }
-
-    // 예약 INSERT — 1:성공 / 0:정원 초과 / -1:DB 오류
-    public int insertReservation(ReservationDTO r) {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
-        String sql = "INSERT INTO reservations (user_id, restaurant_id, reservation_date, reservation_time, party_size, status) "
-                   + "VALUES (?, ?, ?, ?, ?, 'CONFIRMED')";
-
-        try {
-            conn = DBConnection.getConnection();
-
-            // 현재 예약 수가 max_capacity 이상이면 예약 거절
-            int currentCount = getReservationCount(conn, r);
-            int maxCapacity = getMaxCapacity(conn, r.getRestaurantId());
-            if (currentCount >= maxCapacity) {
-                return 0;
-            }
-
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, r.getUserId());
-            pstmt.setInt(2, r.getRestaurantId());
-            pstmt.setString(3, r.getReservationDate());
-            pstmt.setString(4, r.getReservationTime());
-            pstmt.setInt(5, r.getPartySize());
-            pstmt.executeUpdate();
-            return 1;
-        } catch (Exception ex) {
-            System.out.println("insertReservation() 예외발생: " + ex);
-            return -1;
-        } finally {
-            try {
-                if (pstmt != null) pstmt.close();
-                if (conn != null) conn.close();
-            } catch (Exception ex) {
-                throw new RuntimeException(ex.getMessage());
-            }
-        }
-    }
-
 }
