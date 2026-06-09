@@ -137,7 +137,7 @@
             <label>날짜</label>
             <input type="date" id="dateInput" name="date" class="form-control"
                    min="<%=java.time.LocalDate.now()%>"
-                   onchange="checkAvailability()">
+                   onchange="filterTimeOptions(); checkAvailability()">
         </div>
         <div class="mb-3">
             <label>시간</label>
@@ -147,12 +147,23 @@
                 int startMinute     = Integer.parseInt(timeRange[0].split(":")[1]);
                 int endHour         = Integer.parseInt(timeRange[1].split(":")[0]);
                 if (startMinute > 0) startHour++;
+                
+             // 오늘 날짜인 경우 현재 시간 이후만 표시
+                java.util.Calendar now = java.util.Calendar.getInstance();
+                int currentHour = now.get(java.util.Calendar.HOUR_OF_DAY);
+                String today = java.time.LocalDate.now().toString();
             %>
             <select id="timeInput" name="time" class="form-control" onchange="checkAvailability()">
-                <% for (int h = startHour; h < endHour; h++) { %>
-                <option><%=String.format("%02d:00", h)%></option>
-                <% } %>
-            </select>
+    <% for (int h = startHour; h < endHour; h++) { %>
+        <%-- 오늘 날짜면 현재 시간 이후만 표시, 미래 날짜면 전체 표시 --%>
+        <option value="<%=String.format("%02d:00", h)%>"
+            <%-- JavaScript로 날짜 선택에 따라 동적으로 숨김 처리 --%>
+            data-hour="<%=h%>">
+            <%=String.format("%02d:00", h)%>
+        </option>
+    <% } %>
+</select>
+<small id="timeNote" class="text-muted"></small>
         </div>
         <div class="mb-3">
             <label>인원</label>
@@ -172,6 +183,43 @@
 
 <script>
 const restaurantId = <%=restaurant.getId()%>;
+
+//날짜 선택 시 시간 옵션 필터링
+function filterTimeOptions() {
+    const dateInput = document.getElementById('dateInput').value;
+    const today = new Date().toISOString().split('T')[0];
+    const currentHour = new Date().getHours();
+    const options = document.querySelectorAll('#timeInput option');
+    let firstAvailable = null;
+
+    options.forEach(opt => {
+        const hour = parseInt(opt.getAttribute('data-hour'));
+        if (dateInput === today && hour <= currentHour) {
+            opt.disabled = true;
+            opt.style.display = 'none';
+        } else {
+            opt.disabled = false;
+            opt.style.display = '';
+            if (!firstAvailable) firstAvailable = opt;
+        }
+    });
+
+    // 첫 번째 가능한 시간으로 자동 선택
+    if (firstAvailable) {
+        firstAvailable.selected = true;
+    }
+
+    // 안내 메시지
+    const note = document.getElementById('timeNote');
+    if (dateInput === today) {
+        note.textContent = '오늘은 현재 시간(' + currentHour + '시) 이후만 예약 가능합니다.';
+    } else {
+        note.textContent = '';
+    }
+    checkAvailability();
+}
+
+
 
 function checkAvailability() {
     const date = document.getElementById('dateInput').value;
