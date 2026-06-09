@@ -39,3 +39,8 @@ DESC restaurants;
 USE JariyoDB;
 
 SELECT id, username, nickname, email, created_at FROM users;
+
+
+INSERT INTO reviews (user_id, restaurant_id, rating, content)
+VALUES (1, 1, 5, '한우마을 정말 맛있어요! 고기가 너무 부드럽고 서비스도 좋았습니다.');
+

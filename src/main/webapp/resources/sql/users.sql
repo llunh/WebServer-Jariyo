@@ -9,3 +9,5 @@ CREATE TABLE IF NOT EXISTS users (
 ) ;
 
 desc users;
+
+select * from users;

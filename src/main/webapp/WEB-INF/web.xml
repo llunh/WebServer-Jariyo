@@ -132,11 +132,32 @@
     <url-pattern>/ReviewDeleteAction.do</url-pattern>
 </servlet-mapping>
 
+<!-- ===== 로그 필터 ===== -->
+<filter>
+    <filter-name>LogFilter</filter-name>
+    <filter-class>filter.LogFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>LogFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+<!-- 좋아요 URL 매핑 -->
+<servlet-mapping>
+    <servlet-name>ReviewController</servlet-name>
+    <url-pattern>/ReviewLikeAction.do</url-pattern>
+</servlet-mapping>
+
   <!-- ===== 오류 페이지 ===== -->
   <error-page>
     <error-code>404</error-code>
     <location>/views/error404.jsp</location>
   </error-page>
+  
+  <error-page>
+    <error-code>500</error-code>
+    <location>/views/error500.jsp</location>
+</error-page>
 
   <!-- ===== 세션 타임아웃: 30분 ===== -->
   <session-config>
@@ -147,5 +168,24 @@
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
+  
+  <servlet>
+    <servlet-name>ReservationCheckServlet</servlet-name>
+    <servlet-class>mvc.controller.ReservationCheckServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>ReservationCheckServlet</servlet-name>
+    <url-pattern>/ReservationCheck.do</url-pattern>
+</servlet-mapping>
+
+<!-- ===== FavoriteController ===== -->
+<servlet>
+    <servlet-name>FavoriteController</servlet-name>
+    <servlet-class>mvc.controller.FavoriteController</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>FavoriteController</servlet-name>
+    <url-pattern>/FavoriteAction.do</url-pattern>
+</servlet-mapping>
 
 </web-app>

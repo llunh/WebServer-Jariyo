@@ -99,6 +99,42 @@
                 <% } %>
             </div>
         </div>
+        
+        <%@ page import="mvc.model.RestaurantDTO, java.util.ArrayList"%>
+<%
+    ArrayList<RestaurantDTO> favorites =
+        (ArrayList<RestaurantDTO>) request.getAttribute("favorites");
+%>
+
+<%-- 관심 식당 목록 --%>
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">관심 식당</h5>
+        <%
+            if (favorites == null || favorites.isEmpty()) {
+        %>
+            <p class="text-muted">관심 식당이 없습니다.</p>
+        <%
+            } else {
+                for (RestaurantDTO fav : favorites) {
+        %>
+            <div class="d-flex align-items-center border rounded p-2 mb-2">
+                <img src="<%=request.getContextPath()%>/resources/images/<%=fav.getImageFilename()%>"
+                     style="width:60px; height:60px; object-fit:cover; border-radius:4px;"
+                     class="me-3">
+                <div>
+                    <strong><%=fav.getName()%></strong>
+                    <p class="text-muted mb-0"><%=fav.getCategory()%> | <%=fav.getAddress()%></p>
+                </div>
+                <a href="<%=request.getContextPath()%>/RestaurantDetail.do?id=<%=fav.getId()%>"
+                   class="btn btn-sm btn-outline-primary ms-auto">상세보기</a>
+            </div>
+        <%
+                }
+            }
+        %>
+    </div>
+</div>
 
         <%-- 회원 탈퇴 --%>
         <div class="card border-danger">

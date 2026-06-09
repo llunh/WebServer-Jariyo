@@ -13,6 +13,8 @@ import mvc.model.UserDTO;
 import dao.ReservationDAO;
 import dto.ReservationDTO;
 import java.util.ArrayList;
+import mvc.model.FavoriteDAO;
+import mvc.model.RestaurantDTO;
 
 public class MemberController extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -50,13 +52,18 @@ public class MemberController extends HttpServlet {
             requestLogout(request, response);
 
         } else if (command.equals("/MemberMyPage.do")) {
-            // 마이페이지 — 예약 내역 조회 후 전달
             UserDTO loginUser = (UserDTO) request.getSession(false).getAttribute("loginUser");
-            ArrayList<ReservationDTO> reservations = ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId());
-            request.setAttribute("reservations", reservations);
+            if (loginUser != null) {
+                ArrayList<ReservationDTO> reservations =
+                    ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId());
+                request.setAttribute("reservations", reservations);
+
+                ArrayList<RestaurantDTO> favorites =
+                    FavoriteDAO.getInstance().getFavoriteRestaurants(loginUser.getId());
+                request.setAttribute("favorites", favorites);
+            }
             RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
             rd.forward(request, response);
-
         } else if (command.equals("/MemberDeleteAction.do")) {
             // 회원 탈퇴 처리
             requestDeleteMember(request, response);
