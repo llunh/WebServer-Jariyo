@@ -195,8 +195,8 @@ public class UserDAO {
         return sha256(rawPassword).equals(storedHash);
     }
 
-    // 회원 탈퇴 (추가)
-    public boolean deleteUser(int userId) {
+    // 회원 탈퇴
+    public boolean deleteUser(int userId) throws Exception {
         Connection        conn   = null;
         PreparedStatement pstmt  = null;
         boolean           result = false;
@@ -208,8 +208,6 @@ public class UserDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, userId);
             result = pstmt.executeUpdate() == 1;
-        } catch (Exception ex) {
-            System.out.println("deleteUser() 예외발생: " + ex);
         } finally {
             try {
                 if (pstmt != null) pstmt.close();

@@ -183,28 +183,61 @@ public class MemberController extends HttpServlet {
     private void requestDeleteMember(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session   = request.getSession(false);
-        UserDTO     loginUser = (UserDTO) session.getAttribute("loginUser");
+        HttpSession session = request.getSession(false);
+        // 비로그인 상태로 직접 접근 시 로그인 페이지로 이동
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/MemberLoginForm.do");
+            return;
+        }
+        UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            response.sendRedirect(request.getContextPath() + "/MemberLoginForm.do");
+            return;
+        }
 
-        String password = request.getParameter("password").trim();
+        String rawPassword = request.getParameter("password");
+        // 비밀번호 파라미터가 없으면 마이페이지로 돌아감
+        if (rawPassword == null || rawPassword.trim().isEmpty()) {
+            request.setAttribute("error", "비밀번호를 입력해 주세요.");
+            request.setAttribute("reservations", ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId()));
+            request.setAttribute("favorites",    FavoriteDAO.getInstance().getFavoriteRestaurants(loginUser.getId()));
+            RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
+            rd.forward(request, response);
+            return;
+        }
+        String password = rawPassword.trim();
 
         UserDAO dao = UserDAO.getInstance();
 
         // 비밀번호 확인
         if (!dao.checkPassword(password, loginUser.getPassword())) {
+            // 비밀번호 오류 시 마이페이지에 필요한 데이터를 다시 세팅 후 forward
+            request.setAttribute("reservations", ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId()));
+            request.setAttribute("favorites",    FavoriteDAO.getInstance().getFavoriteRestaurants(loginUser.getId()));
             request.setAttribute("error", "비밀번호가 올바르지 않습니다.");
             RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
             rd.forward(request, response);
             return;
         }
 
-        boolean ok = dao.deleteUser(loginUser.getId());
-        if (ok) {
-            // 탈퇴 성공 → 세션 삭제 후 로그인 페이지로
-            session.invalidate();
-            response.sendRedirect(request.getContextPath() + "/MemberLoginForm.do?deleted=true");
-        } else {
-            request.setAttribute("error", "회원 탈퇴에 실패했습니다. 다시 시도해 주세요.");
+        try {
+            boolean ok = dao.deleteUser(loginUser.getId());
+            if (ok) {
+                // 탈퇴 성공 → 세션 삭제 후 로그인 페이지로
+                session.invalidate();
+                response.sendRedirect(request.getContextPath() + "/MemberLoginForm.do?deleted=true");
+            } else {
+                request.setAttribute("reservations", ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId()));
+                request.setAttribute("favorites",    FavoriteDAO.getInstance().getFavoriteRestaurants(loginUser.getId()));
+                request.setAttribute("error", "회원 탈퇴에 실패했습니다. 다시 시도해 주세요.");
+                RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
+                rd.forward(request, response);
+            }
+        } catch (Exception ex) {
+            // DB 에러 메시지를 화면에 표시해 원인 파악
+            request.setAttribute("reservations", ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId()));
+            request.setAttribute("favorites",    FavoriteDAO.getInstance().getFavoriteRestaurants(loginUser.getId()));
+            request.setAttribute("error", "[DB 오류] " + ex.getMessage());
             RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
             rd.forward(request, response);
         }

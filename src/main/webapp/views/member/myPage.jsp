@@ -140,7 +140,7 @@
         <div class="card border-danger">
             <div class="card-body">
                 <h5 class="card-title text-danger mb-3">회원 탈퇴</h5>
-                <p class="text-muted">탈퇴 시 작성한 모든 리뷰가 삭제됩니다.</p>
+                <p class="text-muted">탈퇴 시 예약, 리뷰, 관심 식당 등 모든 데이터가 삭제됩니다.</p>
 
                 <c:if test="${not empty error}">
                     <div class="alert alert-danger">${error}</div>
