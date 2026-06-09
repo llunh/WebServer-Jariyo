@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="dto.RestaurantDTO, java.util.ArrayList" %>
+<%@ page import="mvc.model.RestaurantDTO, java.util.ArrayList" %>
 <%
     ArrayList<RestaurantDTO> list = (ArrayList<RestaurantDTO>) request.getAttribute("restaurantList");
 %>

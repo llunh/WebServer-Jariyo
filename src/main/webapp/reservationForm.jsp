@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="dao.ReservationDAO"%>
-<%@ page import="dto.ReservationDTO"%>
+<%@ page import="mvc.model.ReservationDAO"%>
+<%@ page import="mvc.model.ReservationDTO"%>
 <%@ page import="mvc.model.UserDTO"%>
 <!DOCTYPE html>
 <html>
@@ -38,7 +38,7 @@
 %>
 
 <%-- jsp:useBean으로 예약 정보 표시 --%>
-<jsp:useBean id="reservation" class="dto.ReservationDTO" scope="request"/>
+<jsp:useBean id="reservation" class="mvc.model.ReservationDTO" scope="request"/>
 <jsp:setProperty name="reservation" property="reservationDate" value="<%=date%>"/>
 <jsp:setProperty name="reservation" property="reservationTime" value="<%=time%>"/>
 <jsp:setProperty name="reservation" property="partySize" value="<%=partySize%>"/>

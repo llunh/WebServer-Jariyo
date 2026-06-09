@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import dao.ReservationDAO;
+import mvc.model.ReservationDAO;
 
 public class ReservationCheckServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;

@@ -1,9 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="dao.RestaurantDAO" %>
-<%@ page import="dao.MenuDAO" %>
-<%@ page import="dto.RestaurantDTO" %>
-<%@ page import="dto.MenuDTO" %>
+<%@ page import="mvc.model.RestaurantDAO" %>
+<%@ page import="mvc.model.RestaurantDTO" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html>

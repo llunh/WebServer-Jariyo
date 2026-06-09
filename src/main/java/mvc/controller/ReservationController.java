@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import dao.ReservationDAO;
-import dto.ReservationDTO;
+import mvc.model.ReservationDAO;
+import mvc.model.ReservationDTO;
 import mvc.model.UserDTO;
 
 public class ReservationController extends HttpServlet {

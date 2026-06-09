@@ -1,12 +1,11 @@
-package dao;
+package mvc.model;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-import database.DBConnection;
-import dto.ReservationDTO;
+import mvc.database.DBConnection;
 
 public class ReservationDAO {
 
@@ -62,7 +61,6 @@ public class ReservationDAO {
         return list;
     }
 
-    // 같은 식당 + 날짜 + 시간대의 현재 예약 수 조회
     private int getReservationCount(Connection conn, ReservationDTO r) throws Exception {
         String sql = "SELECT COUNT(*) FROM reservations "
                    + "WHERE restaurant_id = ? AND reservation_date = ? AND reservation_time = ? AND status = 'CONFIRMED'";
@@ -75,7 +73,6 @@ public class ReservationDAO {
         return rs.getInt(1);
     }
 
-    // 해당 식당의 max_capacity 조회
     private int getMaxCapacity(Connection conn, int restaurantId) throws Exception {
         String sql = "SELECT max_capacity FROM restaurants WHERE id = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -95,7 +92,7 @@ public class ReservationDAO {
                    + "VALUES (?, ?, ?, ?, ?, 'CONFIRMED')";
         try {
             conn = DBConnection.getConnection();
-            conn.setAutoCommit(false);  // 트랜잭션 시작
+            conn.setAutoCommit(false);
 
             int currentCount = getReservationCount(conn, r);
             int maxCapacity  = getMaxCapacity(conn, r.getRestaurantId());
@@ -113,7 +110,7 @@ public class ReservationDAO {
             pstmt.setInt(5, r.getPartySize());
             pstmt.executeUpdate();
 
-            conn.commit();  // 커밋
+            conn.commit();
             return 1;
 
         } catch (Exception ex) {

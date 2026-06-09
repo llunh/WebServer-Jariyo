@@ -13,7 +13,7 @@ VALUES
 
 UPDATE restaurants SET name = '보글보글' WHERE name = '바베큐킹';
 UPDATE restaurants SET category = '기타' WHERE category = '멕시코식';
-
+UPDATE restaurants SET max_capacity = 2 WHERE name = '타코벨라';
 select *from restaurants;
 
 
@@ -66,6 +66,8 @@ VALUES
 (6, '치킨타코', 8500,  '메인', 'r6_menu1.jpg'),
 (6, '폴드포크 타코',9000, '메인', 'r6_menu2.jpeg'),
 (6, '쉬림프 타코',9500, '메인', 'r6_menu3.jpg');
+
+
 
 
 

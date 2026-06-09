@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="mvc.model.UserDTO"%>
-<%@ page import="dto.ReservationDTO, java.util.ArrayList"%>
+<%@ page import="mvc.model.ReservationDTO, java.util.ArrayList"%>
 <%
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
     ArrayList<ReservationDTO> reservations = (ArrayList<ReservationDTO>) request.getAttribute("reservations");

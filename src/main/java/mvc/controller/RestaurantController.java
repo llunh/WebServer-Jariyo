@@ -9,10 +9,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import dao.RestaurantDAO;
-import dao.MenuDAO;
-import dto.RestaurantDTO;
-import dto.MenuDTO;
+import mvc.model.RestaurantDAO;
+import mvc.model.MenuDAO;
+import mvc.model.RestaurantDTO;
+import mvc.model.MenuDTO;
 
 public class RestaurantController extends HttpServlet {
     private static final long serialVersionUID = 1L;

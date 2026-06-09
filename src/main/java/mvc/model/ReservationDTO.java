@@ -1,4 +1,4 @@
-package dto;
+package mvc.model;
 
 public class ReservationDTO {
     private int id;
@@ -10,16 +10,15 @@ public class ReservationDTO {
     private String status;
     private String restaurantName;
 
-
-    public int getId() {return id;}
+    public int getId() { return id; }
     public void setId(int id) { this.id = id; }
-    
+
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
 
-    public int getRestaurantId() {return restaurantId;}
+    public int getRestaurantId() { return restaurantId; }
     public void setRestaurantId(int restaurantId) { this.restaurantId = restaurantId; }
-    
+
     public String getReservationDate() { return reservationDate; }
     public void setReservationDate(String reservationDate) { this.reservationDate = reservationDate; }
 
@@ -35,4 +34,3 @@ public class ReservationDTO {
     public String getRestaurantName() { return restaurantName; }
     public void setRestaurantName(String restaurantName) { this.restaurantName = restaurantName; }
 }
-
