@@ -168,7 +168,7 @@
         <div class="mb-3">
             <label>인원</label>
             <input type="number" name="partySize" min="1"
-                   max="<%=restaurant.getMaxCapacity()%>" class="form-control">
+                   max="<%=restaurant.getMaxPartySize()%>" class="form-control">
         </div>
 
         <%-- AJAX 결과 표시 --%>

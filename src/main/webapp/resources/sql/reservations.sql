@@ -16,4 +16,6 @@ ALTER TABLE reservations MODIFY user_id INT NULL;
 
 desc reservations;
 
+
+
 select * from reservations;

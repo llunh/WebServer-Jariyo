@@ -42,6 +42,7 @@ public class RestaurantDAO {
                 restaurant.setOpeningHours(rs.getString("opening_hours"));
                 restaurant.setImageFilename(rs.getString("image_filename"));
                 restaurant.setMaxCapacity(rs.getInt("max_capacity"));
+                restaurant.setMaxPartySize(rs.getInt("max_party_size"));
                 list.add(restaurant);
             }
         } catch (Exception ex) {
@@ -82,6 +83,7 @@ public class RestaurantDAO {
                 restaurant.setOpeningHours(rs.getString("opening_hours"));
                 restaurant.setImageFilename(rs.getString("image_filename"));
                 restaurant.setMaxCapacity(rs.getInt("max_capacity"));
+                restaurant.setMaxPartySize(rs.getInt("max_party_size"));
             }
         } catch (Exception ex) {
             System.out.println("getRestaurantById() 예외발생: " + ex);

@@ -17,3 +17,5 @@ desc restaurants;
 
 USE JariyoDB;
 e5f56e2e108b859293194f3b38545cce8334cb1f
+
+ALTER TABLE restaurants ADD COLUMN max_party_size INT NOT NULL DEFAULT 1;

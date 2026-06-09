@@ -10,6 +10,7 @@ public class RestaurantDTO {
     private String openingHours;
     private String imageFilename;
     private int    maxCapacity;
+    private int maxPartySize;
 
     public RestaurantDTO() {
         super();
@@ -38,4 +39,7 @@ public class RestaurantDTO {
 
     public int getMaxCapacity()                     { return maxCapacity; }
     public void setMaxCapacity(int maxCapacity)     { this.maxCapacity = maxCapacity; }
+    
+    public int getMaxPartySize()                  { return maxPartySize; }
+    public void setMaxPartySize(int maxPartySize) { this.maxPartySize = maxPartySize; }
 }

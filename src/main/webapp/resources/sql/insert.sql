@@ -14,6 +14,13 @@ VALUES
 UPDATE restaurants SET name = '보글보글' WHERE name = '바베큐킹';
 UPDATE restaurants SET category = '기타' WHERE category = '멕시코식';
 UPDATE restaurants SET max_capacity = 2 WHERE name = '타코벨라';
+
+UPDATE restaurants SET max_party_size = 10 WHERE name = '한우마을';
+UPDATE restaurants SET max_party_size = 6  WHERE name = '스시히로';
+UPDATE restaurants SET max_party_size = 4  WHERE name = '파스타노';
+UPDATE restaurants SET max_party_size = 12 WHERE name = '북경반점';
+UPDATE restaurants SET max_party_size = 5  WHERE name = '보글보글';
+UPDATE restaurants SET max_party_size = 4  WHERE name = '타코벨라';
 select *from restaurants;
 
 
