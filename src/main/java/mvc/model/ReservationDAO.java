@@ -61,6 +61,19 @@ public class ReservationDAO {
         return list;
     }
 
+    // 같은 유저가 같은 식당·같은 날짜에 이미 예약했는지 확인
+    private boolean isDuplicate(Connection conn, ReservationDTO r) throws Exception {
+        String sql = "SELECT COUNT(*) FROM reservations " +
+                     "WHERE user_id = ? AND restaurant_id = ? AND reservation_date = ? AND status = 'CONFIRMED'";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, r.getUserId());
+        pstmt.setInt(2, r.getRestaurantId());
+        pstmt.setString(3, r.getReservationDate());
+        ResultSet rs = pstmt.executeQuery();
+        rs.next();
+        return rs.getInt(1) > 0;
+    }
+
     private int getReservationCount(Connection conn, ReservationDTO r) throws Exception {
         String sql = "SELECT COUNT(*) FROM reservations "
                    + "WHERE restaurant_id = ? AND reservation_date = ? AND reservation_time = ? AND status = 'CONFIRMED'";
@@ -94,6 +107,13 @@ public class ReservationDAO {
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false);
 
+            // 같은 날짜에 이미 예약이 있으면 중복 예약 차단 (리턴 2)
+            if (isDuplicate(conn, r)) {
+                conn.rollback();
+                return 2;
+            }
+
+            // 해당 시간대 예약 건수가 max_capacity 초과 시 차단 (리턴 0)
             int currentCount = getReservationCount(conn, r);
             int maxCapacity  = getMaxCapacity(conn, r.getRestaurantId());
 

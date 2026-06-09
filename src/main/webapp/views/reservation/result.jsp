@@ -27,6 +27,11 @@
         <div class="alert alert-warning">해당 시간대는 정원이 꽉 찼습니다. 다른 시간을 선택해주세요.</div>
         <a href="javascript:history.back()" class="btn btn-secondary">돌아가기</a>
 
+    <% } else if (result == 2) { %>
+        <%-- 같은 날짜에 이미 예약이 존재하는 경우 --%>
+        <div class="alert alert-warning">이미 해당 날짜에 예약이 있습니다. 다른 날짜를 선택해주세요.</div>
+        <a href="javascript:history.back()" class="btn btn-secondary">돌아가기</a>
+
     <% } else { %>
         <div class="alert alert-danger">예약에 실패했습니다. 다시 시도해주세요.</div>
         <a href="javascript:history.back()" class="btn btn-secondary">돌아가기</a>
