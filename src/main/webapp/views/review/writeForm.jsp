@@ -1,12 +1,12 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ page import="java.util.*"%>
-<%@ page import="mvc.model.RestaurantDTO"%>
+<%@ page import="mvc.model.ReservationDTO"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
     String sessionId = (String) session.getAttribute("sessionId");
-    List<RestaurantDTO> restaurantList =
-        (List<RestaurantDTO>) request.getAttribute("restaurantList");
-    boolean hasVisited = (restaurantList != null && !restaurantList.isEmpty());
+    List<ReservationDTO> reservationList =
+        (List<ReservationDTO>) request.getAttribute("reservationList");
+    boolean hasVisited = (reservationList != null && !reservationList.isEmpty());
 %>
 <html>
 <head>
@@ -14,8 +14,8 @@
 <title>자리요 - 리뷰 작성</title>
 <script type="text/javascript">
     function checkForm() {
-        if (!document.writeForm.restaurantId.value) {
-            alert("식당을 선택해 주세요.");
+        if (!document.writeForm.reservationId.value) {
+            alert("예약을 선택해 주세요.");
             return false;
         }
         if (!document.writeForm.content.value.trim()) {
@@ -80,14 +80,22 @@
             <div class="mb-3 row">
                 <label class="col-sm-3 col-form-label">식당 선택</label>
                 <div class="col-sm-9">
-                    <select name="restaurantId" class="form-select">
-                        <option value="">-- 식당을 선택해 주세요 --</option>
-                        <% for (RestaurantDTO r : restaurantList) { %>
-                            <option value="<%=r.getId()%>">
-                                <%=r.getName()%> (<%=r.getCategory()%>)
-                            </option>
-                        <% } %>
-                    </select>
+                   <select name="reservationId" class="form-select" onchange="syncRestaurantId(this)">
+    <option value="">-- 예약을 선택해 주세요 --</option>
+    <% for (ReservationDTO res : reservationList) { %>
+        <option value="<%=res.getId()%>" data-restaurant-id="<%=res.getRestaurantId()%>">
+            <%=res.getReservationDate()%> <%=res.getReservationTime()%> - <%=res.getRestaurantName()%>
+        </option>
+    <% } %>
+</select>
+<input type="hidden" name="restaurantId" id="restaurantId">
+<script>
+function syncRestaurantId(sel) {
+    var selected = sel.options[sel.selectedIndex];
+    document.getElementById("restaurantId").value =
+        selected.getAttribute("data-restaurant-id") || "";
+}
+</script>
                 </div>
             </div>
 

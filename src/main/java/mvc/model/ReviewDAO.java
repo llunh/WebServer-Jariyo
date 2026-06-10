@@ -154,7 +154,7 @@ public class ReviewDAO {
         ResultSet         keys  = null;
         boolean           result = false;
 
-        String reviewSql = "INSERT INTO reviews (user_id, restaurant_id, rating, content) VALUES (?, ?, ?, ?)";
+        String reviewSql = "INSERT INTO reviews (user_id, reservation_id, restaurant_id,rating, content) VALUES (?,?,?, ?, ?)";
         String imageSql  = "INSERT INTO review_images (review_id, file_name, ori_name) VALUES (?, ?, ?)";
 
         try {
@@ -163,9 +163,10 @@ public class ReviewDAO {
 
             pstmt = conn.prepareStatement(reviewSql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, review.getUserId());
-            pstmt.setInt(2, review.getRestaurantId());
-            pstmt.setInt(3, review.getRating());
-            pstmt.setString(4, review.getContent());
+            pstmt.setInt(2, review.getReservationId());
+            pstmt.setInt(3, review.getRestaurantId());
+            pstmt.setInt(4, review.getRating());
+            pstmt.setString(5, review.getContent());
             pstmt.executeUpdate();
 
             keys = pstmt.getGeneratedKeys();
@@ -231,6 +232,20 @@ public class ReviewDAO {
             }
         }
         return result;
+    }
+    
+    // 리뷰 중복 체크 메서드 -> 예약 건당 리뷰 하나
+    public boolean hasReviewForReservation(int reservationId) {
+        String sql = "SELECT COUNT(*) FROM reviews WHERE reservation_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, reservationId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (Exception ex) {
+            System.out.println("hasReviewForReservation() 예외발생: " + ex);
+        }
+        return false;
     }
     
  // 식당별 리뷰 목록 조회

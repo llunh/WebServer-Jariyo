@@ -15,13 +15,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
-
+import mvc.model.ReservationDAO;
+import mvc.model.RestaurantDAO;
 import mvc.model.ReviewDAO;
 import mvc.model.ReviewDTO;
 import mvc.model.ReviewImageDTO;
 import mvc.model.ReviewLikeDAO;
 import mvc.model.UserDTO;
-import mvc.model.RestaurantDAO;
 
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024,
@@ -53,13 +53,11 @@ public class ReviewController extends HttpServlet {
             rd.forward(request, response);
 
         } else if (command.equals("/ReviewWriteForm.do")) {
-            UserDTO loginUser = (UserDTO) request.getSession(false).getAttribute("loginUser");
-
-            request.setAttribute("restaurantList",
-                RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
-
-            RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
-            rd.forward(request, response);
+        	 UserDTO loginUser = (UserDTO) request.getSession(false).getAttribute("loginUser");
+        	    request.setAttribute("reservationList",
+        	        ReservationDAO.getInstance().getReviewableReservations(loginUser.getId()));
+        	    RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
+        	    rd.forward(request, response);
 
         } else if (command.equals("/ReviewWriteAction.do")) {
             requestReviewWrite(request, response);
@@ -114,30 +112,29 @@ public class ReviewController extends HttpServlet {
         UserDTO     loginUser = (UserDTO) session.getAttribute("loginUser");
 
         String content         = request.getParameter("content").trim();
-        String restaurantIdStr = request.getParameter("restaurantId");
+        String reservationIdStr = request.getParameter("reservationId");
+        String restaurantIdStr  = request.getParameter("restaurantId"); // hidden으로 받음
         String ratingStr       = request.getParameter("rating");
 
-        // 식당 선택 여부 확인
-        if (restaurantIdStr == null || restaurantIdStr.isEmpty()) {
-            request.setAttribute("error", "식당을 선택해 주세요.");
-
-            request.setAttribute("restaurantList",
-                RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
-
+        // 예약 선택 여부 확인
+        if (reservationIdStr == null || reservationIdStr.isEmpty()) {
+            request.setAttribute("error", "예약을 선택해 주세요.");
+            request.setAttribute("reservationList",
+                ReservationDAO.getInstance().getReviewableReservations(loginUser.getId()));
             RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
             rd.forward(request, response);
             return;
         }
 
+        int reservationId = Integer.parseInt(reservationIdStr);
         int restaurantId = Integer.parseInt(restaurantIdStr);
 
 
-        // 방문 여부 확인 - 예약한 식당만 리뷰 작성 가능
-        if (!RestaurantDAO.getInstance().hasVisited(loginUser.getId(), restaurantId)) {
-            request.setAttribute("error", "예약 후 방문한 식당에만 리뷰를 작성할 수 있습니다.");
-            request.setAttribute("restaurantList",
-                RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
-
+        // 방문 여부 확인 -  이미 해당 예약에 리뷰가 있는지 확인
+        if (ReviewDAO.getInstance().hasReviewForReservation(reservationId)) {
+            request.setAttribute("error", "이미 해당 예약에 리뷰를 작성하셨습니다.");
+            request.setAttribute("reservationList",
+                ReservationDAO.getInstance().getReviewableReservations(loginUser.getId()));
             RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
             rd.forward(request, response);
             return;
@@ -146,8 +143,8 @@ public class ReviewController extends HttpServlet {
         if (content.isEmpty() || content.length() > 1000) {
             request.setAttribute("error", "리뷰 내용을 1~1000자로 입력해 주세요.");
 
-            request.setAttribute("restaurantList",
-                RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
+            request.setAttribute("reservationList",
+            		ReservationDAO.getInstance().getReviewableReservations(loginUser.getId()));
 
             RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
             rd.forward(request, response);
@@ -172,10 +169,10 @@ public class ReviewController extends HttpServlet {
             String ext     = (dotIdx >= 0) ? oriName.substring(dotIdx).toLowerCase() : "";
 
             if (!allowedExt.contains(ext)) {
-                request.setAttribute("error", "이미지 파일(jpg, png, gif, webp)만 업로드 가능합니다.");
+                request.setAttribute("error", "이미지 파일(jpg, jpeg, png, gif, webp)만 업로드 가능합니다.");
 
-                request.setAttribute("restaurantList",
-                    RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
+                request.setAttribute("reservationList",
+                		ReservationDAO.getInstance().getReviewableReservations(loginUser.getId()));
 
                 RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
                 rd.forward(request, response);
@@ -194,6 +191,7 @@ public class ReviewController extends HttpServlet {
         ReviewDTO review = new ReviewDTO();
         review.setUserId(loginUser.getId());
         review.setRestaurantId(restaurantId);
+        review.setReservationId(reservationId);
         review.setRating(Integer.parseInt(ratingStr));
         review.setContent(content);
 
@@ -205,8 +203,8 @@ public class ReviewController extends HttpServlet {
         } else {
             request.setAttribute("error", "리뷰 저장에 실패했습니다. 다시 시도해 주세요.");
 
-            request.setAttribute("restaurantList",
-                RestaurantDAO.getInstance().getVisitedRestaurants(loginUser.getId()));
+            request.setAttribute("reservationList",
+            	    ReservationDAO.getInstance().getReviewableReservations(loginUser.getId()));
 
             RequestDispatcher rd = request.getRequestDispatcher("/views/review/writeForm.jsp");
             rd.forward(request, response);

@@ -195,4 +195,51 @@ public class ReservationDAO {
         }
         return result;
     }
+    
+    // 리뷰 작성 가능한 예약 목록(방문 완료 + 리뷰 미작성)
+    public ArrayList<ReservationDTO> getReviewableReservations(int userId) {
+        Connection        conn  = null;
+        PreparedStatement pstmt = null;
+        ResultSet         rs    = null;
+        ArrayList<ReservationDTO> list = new ArrayList<ReservationDTO>();
+
+        String sql =
+            "SELECT res.id, res.reservation_date, res.reservation_time, " +
+            "       res.restaurant_id, r.name AS restaurant_name " +
+            "FROM reservations res " +
+            "JOIN restaurants r ON res.restaurant_id = r.id " +
+            "LEFT JOIN reviews rv ON rv.reservation_id = res.id " +
+            "WHERE res.user_id = ? " +
+            "  AND res.status = 'CONFIRMED' " +
+            "  AND CONCAT(res.reservation_date, ' ', res.reservation_time) < NOW() " +
+            "  AND rv.id IS NULL " +
+            "ORDER BY res.reservation_date DESC";
+
+        try {
+            conn  = DBConnection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, userId);
+            rs    = pstmt.executeQuery();
+            while (rs.next()) {
+                ReservationDTO r = new ReservationDTO();
+                r.setId(rs.getInt("id"));
+                r.setRestaurantId(rs.getInt("restaurant_id"));
+                r.setReservationDate(rs.getString("reservation_date"));
+                r.setReservationTime(rs.getString("reservation_time"));
+                r.setRestaurantName(rs.getString("restaurant_name"));
+                list.add(r);
+            }
+        } catch (Exception ex) {
+            System.out.println("getReviewableReservations() 예외발생: " + ex);
+        } finally {
+            try {
+                if (rs    != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (conn  != null) conn.close();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
+        }
+        return list;
+    }
 }

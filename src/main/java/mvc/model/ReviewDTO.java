@@ -7,6 +7,7 @@ public class ReviewDTO {
     private int    id;
     private int    userId;
     private int    restaurantId;
+    private int reservationId;
     private int    rating;
     private String content;
     private String createdAt;
@@ -27,6 +28,9 @@ public class ReviewDTO {
 
     public int getRestaurantId()                              { return restaurantId; }
     public void setRestaurantId(int restaurantId)             { this.restaurantId = restaurantId; }
+    
+    public int getReservationId() { return reservationId; }
+    public void setReservationId(int reservationId) { this.reservationId = reservationId; }
 
     public int getRating()                                    { return rating; }
     public void setRating(int rating)                         { this.rating = rating; }

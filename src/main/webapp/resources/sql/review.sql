@@ -10,6 +10,11 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
+
+ALTER TABLE reviews
+  ADD COLUMN reservation_id INT UNIQUE AFTER user_id,
+  ADD FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE;
+
 CREATE TABLE IF NOT EXISTS review_images (
     id         INT          NOT NULL AUTO_INCREMENT,
     review_id  INT          NOT NULL,
