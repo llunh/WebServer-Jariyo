@@ -45,7 +45,12 @@ function setCategory(cat) {
 <div class="container mt-4">
     <jsp:include page="/views/menu.jsp" />
 
-    <h2>식당 목록</h2>
+    <div class="p-5 mb-4 bg-body-tertiary rounded-3">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold">식당</h1>
+            <p class="col-md-8 fs-4">Restaurants</p>
+        </div>
+    </div>
 
     <!-- 검색창 -->
     <div class="input-group mb-3">

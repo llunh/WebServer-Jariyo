@@ -1,6 +1,8 @@
 package mvc.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -8,13 +10,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import mvc.model.UserDAO;
-import mvc.model.UserDTO;
+import mvc.model.FavoriteDAO;
 import mvc.model.ReservationDAO;
 import mvc.model.ReservationDTO;
-import java.util.ArrayList;
-import mvc.model.FavoriteDAO;
 import mvc.model.RestaurantDTO;
+import mvc.model.ReviewDAO;
+import mvc.model.ReviewDTO;
+import mvc.model.UserDAO;
+import mvc.model.UserDTO;
 
 public class MemberController extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -61,6 +64,11 @@ public class MemberController extends HttpServlet {
                 ArrayList<RestaurantDTO> favorites =
                     FavoriteDAO.getInstance().getFavoriteRestaurants(loginUser.getId());
                 request.setAttribute("favorites", favorites);
+                
+                // 내 리뷰 조회
+                ArrayList<ReviewDTO> myReviews =
+                    ReviewDAO.getInstance().getReviewsByUserId(loginUser.getId());
+                request.setAttribute("myReviews", myReviews);
             }
             RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
             rd.forward(request, response);

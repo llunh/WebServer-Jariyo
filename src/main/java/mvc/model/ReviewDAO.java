@@ -294,4 +294,51 @@ public class ReviewDAO {
         }
         return list;
     }
+    
+  //마이페이지에서 리뷰 조회
+    public ArrayList<ReviewDTO> getReviewsByUserId(int userId) {
+        Connection        conn  = null;
+        PreparedStatement pstmt = null;
+        ResultSet         rs    = null;
+        ArrayList<ReviewDTO> list = new ArrayList<ReviewDTO>();
+
+        String sql =
+            "SELECT r.id, r.rating, r.content, " +
+            "       DATE_FORMAT(r.created_at, '%Y/%m/%d %H:%i') AS created_at, " +
+            "       rs.name AS restaurant_name " +
+            "FROM reviews r " +
+            "JOIN restaurants rs ON r.restaurant_id = rs.id " +
+            "WHERE r.user_id = ? " +
+            "ORDER BY r.id DESC";
+
+        try {
+            conn  = DBConnection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, userId);
+            rs    = pstmt.executeQuery();
+            while (rs.next()) {
+                ReviewDTO review = new ReviewDTO();
+                review.setId(rs.getInt("id"));
+                review.setRating(rs.getInt("rating"));
+                review.setContent(rs.getString("content"));
+                review.setCreatedAt(rs.getString("created_at"));
+                review.setRestaurantName(rs.getString("restaurant_name"));
+                review.setImages(getImagesByReviewId(rs.getInt("id")));
+                list.add(review);
+            }
+        } catch (Exception ex) {
+            System.out.println("getReviewsByUserId() 예외발생: " + ex);
+        } finally {
+            try {
+                if (rs    != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (conn  != null) conn.close();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
+        }
+        return list;
+    }
 }
+
+

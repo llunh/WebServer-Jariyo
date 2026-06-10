@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="mvc.model.UserDTO"%>
+<%@ page import="mvc.model.ReviewDTO"%>
 <%@ page import="mvc.model.ReservationDTO, java.util.ArrayList"%>
 <%
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
@@ -101,6 +102,7 @@
         </div>
         
         <%@ page import="mvc.model.RestaurantDTO, java.util.ArrayList"%>
+
 <%
     ArrayList<RestaurantDTO> favorites =
         (ArrayList<RestaurantDTO>) request.getAttribute("favorites");
@@ -133,6 +135,57 @@
                 }
             }
         %>
+    </div>
+</div>
+
+<%
+    ArrayList<ReviewDTO> myReviews =
+        (ArrayList<ReviewDTO>) request.getAttribute("myReviews");
+%>
+<%-- 내 리뷰 목록 --%>
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">내 리뷰</h5>
+        <% if (myReviews == null || myReviews.isEmpty()) { %>
+            <p class="text-muted">작성한 리뷰가 없습니다.</p>
+        <% } else {
+               for (ReviewDTO rv : myReviews) { %>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">
+                            🍽 <%= rv.getRestaurantName() %>
+                            &nbsp;
+                            <% for (int s = 0; s < rv.getRating(); s++) { out.print("⭐"); } %>
+                            <small class="text-muted">(<%= rv.getRating() %>/5)</small>
+                        </h5>
+                        <small class="text-muted"><%= rv.getCreatedAt() %></small>
+                    </div>
+                    <p class="card-text"><%= rv.getContent() %></p>
+
+                    <%-- 이미지 출력 --%>
+                    <%
+                        java.util.List<mvc.model.ReviewImageDTO> imgs = rv.getImages();
+                        if (imgs != null && !imgs.isEmpty()) {
+                            for (mvc.model.ReviewImageDTO img : imgs) {
+                    %>
+                        <img src="<%= request.getContextPath() %>/uploads/<%= img.getFileName() %>"
+                             alt="<%= img.getOriName() %>"
+                             style="max-width:200px; max-height:200px; margin:4px; object-fit:cover;"
+                             class="rounded">
+                    <%
+                            }
+                        }
+                    %>
+                  
+                    <div class="mt-2">
+                        <a href="<%= request.getContextPath() %>/ReviewDeleteAction.do?reviewId=<%= rv.getId() %>"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a>
+                    </div>
+                </div>
+            </div>
+        <% } } %>
     </div>
 </div>
 

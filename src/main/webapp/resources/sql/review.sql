@@ -36,3 +36,5 @@ CREATE TABLE IF NOT EXISTS review_likes (
 ) DEFAULT CHARSET=utf8mb4;
 
 show tables;
+
+select * from reviews;

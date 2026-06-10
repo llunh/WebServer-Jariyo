@@ -96,33 +96,28 @@
                     }
                 %>
 
-                <%-- 좋아요 버튼 --%>
-                <div class="mt-2 d-flex align-items-center gap-2">
-                    <%
-                        boolean liked = false;
-                        if (loginUser != null) {
-                            liked = ReviewLikeDAO.getInstance().isLiked(review.getId(), loginUser.getId());
-                        }
-                        String likeClass = liked ? "btn-danger" : "btn-outline-danger";
-                        String likeText  = liked ? "좋아요 취소" : "좋아요";
-                    %>
-                    <%
-                        if (loginUser != null) {
-                    %>
-                        <a href="<%=request.getContextPath()%>/ReviewLikeAction.do?reviewId=<%=review.getId()%>&pageNum=<%=pageNum%>"
-                           class="btn btn-sm <%=likeClass%>">
-                            &#10084; <%=likeText%> (<%=review.getLikeCount()%>)
-                        </a>
-                    <%
-                        } else {
-                    %>
-                        <span class="btn btn-sm btn-outline-danger disabled">
-                            &#10084; 좋아요 (<%=review.getLikeCount()%>)
-                        </span>
-                    <%
-                        }
-                    %>
-                </div>
+               <%-- 좋아요 버튼 --%>
+<div class="mt-2 d-flex align-items-center gap-2">
+    <%
+        if (loginUser != null && loginUser.getId() != review.getUserId()) {
+            boolean liked = ReviewLikeDAO.getInstance().isLiked(review.getId(), loginUser.getId());
+            String likeClass = liked ? "btn-danger" : "btn-outline-danger";
+            String likeText  = liked ? "좋아요 취소" : "좋아요";
+    %>
+        <a href="<%=request.getContextPath()%>/ReviewLikeAction.do?reviewId=<%=review.getId()%>&pageNum=<%=pageNum%>"
+           class="btn btn-sm <%=likeClass%>">
+            &#10084; <%=likeText%> (<%=review.getLikeCount()%>)
+        </a>
+    <%
+        } else if (loginUser == null) {
+    %>
+        <span class="btn btn-sm btn-outline-danger disabled">
+            &#10084; 좋아요 (<%=review.getLikeCount()%>)
+        </span>
+    <%
+        }
+    %>
+</div>
 
                 <%-- 본인 리뷰일 때만 삭제 버튼 표시 --%>
                 <%
