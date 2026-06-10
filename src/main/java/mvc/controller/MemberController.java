@@ -209,6 +209,7 @@ public class MemberController extends HttpServlet {
             request.setAttribute("error", "비밀번호를 입력해 주세요.");
             request.setAttribute("reservations", ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId()));
             request.setAttribute("favorites",    FavoriteDAO.getInstance().getFavoriteRestaurants(loginUser.getId()));
+            request.setAttribute("myReviews",    ReviewDAO.getInstance().getReviewsByUserId(loginUser.getId()));
             RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
             rd.forward(request, response);
             return;
@@ -222,6 +223,7 @@ public class MemberController extends HttpServlet {
             // 비밀번호 오류 시 마이페이지에 필요한 데이터를 다시 세팅 후 forward
             request.setAttribute("reservations", ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId()));
             request.setAttribute("favorites",    FavoriteDAO.getInstance().getFavoriteRestaurants(loginUser.getId()));
+            request.setAttribute("myReviews",    ReviewDAO.getInstance().getReviewsByUserId(loginUser.getId()));
             request.setAttribute("error", "비밀번호가 올바르지 않습니다.");
             RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
             rd.forward(request, response);
@@ -237,15 +239,16 @@ public class MemberController extends HttpServlet {
             } else {
                 request.setAttribute("reservations", ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId()));
                 request.setAttribute("favorites",    FavoriteDAO.getInstance().getFavoriteRestaurants(loginUser.getId()));
+                request.setAttribute("myReviews",    ReviewDAO.getInstance().getReviewsByUserId(loginUser.getId()));
                 request.setAttribute("error", "회원 탈퇴에 실패했습니다. 다시 시도해 주세요.");
                 RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
                 rd.forward(request, response);
             }
-        } catch (Exception ex) {
-            // DB 에러 메시지를 화면에 표시해 원인 파악
+        }  catch (Exception ex) {
             request.setAttribute("reservations", ReservationDAO.getInstance().getReservationsByUserId(loginUser.getId()));
             request.setAttribute("favorites",    FavoriteDAO.getInstance().getFavoriteRestaurants(loginUser.getId()));
-            request.setAttribute("error", "[DB 오류] " + ex.getMessage());
+            request.setAttribute("myReviews",    ReviewDAO.getInstance().getReviewsByUserId(loginUser.getId()));
+            request.setAttribute("error", "회원 탈퇴에 실패했습니다. 다시 시도해 주세요.");
             RequestDispatcher rd = request.getRequestDispatcher("/views/member/myPage.jsp");
             rd.forward(request, response);
         }
