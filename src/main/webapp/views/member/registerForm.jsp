@@ -5,6 +5,15 @@
 <link rel="stylesheet" href="<c:url value='/resources/css/bootstrap.min.css'/>">
 <title>자리요 - 회원가입</title>
 <script type="text/javascript">
+    function resetForm() {
+        var f = document.registerForm;
+        f.username.value  = '';
+        f.password.value  = '';
+        f.password2.value = '';
+        f.email.value     = '';
+        f.nickname.value  = '';
+    }
+
     function checkForm() {
         if (document.registerForm.username.value.trim().length < 3) {
             alert("아이디는 3자 이상이어야 합니다.");
@@ -90,7 +99,7 @@
             <div class="mb-3 row">
                 <div class="col-sm-9 d-flex gap-2">
                     <input type="submit" class="btn btn-primary"   value="가입하기">
-                    <input type="reset"  class="btn btn-secondary" value="초기화">
+                    <input type="button" class="btn btn-secondary" value="초기화" onclick="resetForm()">
                 </div>
             </div>
         </form>
