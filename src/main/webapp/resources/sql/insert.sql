@@ -45,7 +45,6 @@ VALUES
 (2, '우동', 6000, '사이드', 'r2_menu4.jpg'),
 (2, '냉모밀',7000,  '사이드', 'r2_menu6.jpg');
 
-select * from menus;
 
 INSERT INTO menus (restaurant_id, name, price, description, category, image_filename)
 VALUES

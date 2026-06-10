@@ -9,4 +9,3 @@ CREATE TABLE menus (
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
 );
 
-desc menus;

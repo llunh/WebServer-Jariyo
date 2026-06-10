@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="mvc.model.UserDTO"%>
 <%@ page import="mvc.model.ReviewDTO"%>
-<%@ page import="mvc.model.ReservationDTO, java.util.ArrayList"%>
+<%@ page import="mvc.model.RestaurantDTO, mvc.model.ReservationDTO, java.util.ArrayList"%>
 <%
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
     ArrayList<ReservationDTO> reservations = (ArrayList<ReservationDTO>) request.getAttribute("reservations");
@@ -101,7 +101,7 @@
             </div>
         </div>
         
-        <%@ page import="mvc.model.RestaurantDTO, java.util.ArrayList"%>
+       
 
 <%
     ArrayList<RestaurantDTO> favorites =

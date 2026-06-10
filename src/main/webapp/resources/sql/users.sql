@@ -8,7 +8,4 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at  DATETIME     DEFAULT NOW() ON UPDATE NOW() COMMENT '수정 일시'
 ) ;
 
-desc users;
 
-
-select * from users;

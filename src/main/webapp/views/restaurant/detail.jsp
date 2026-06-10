@@ -35,7 +35,7 @@
 <body>
 
 <%-- 메뉴바 --%>
-<jsp:include page="views/menu.jsp" />
+<jsp:include page="/views/menu.jsp" />
 
 <%-- 식당 정보 --%>
 <div class="container mt-4">
@@ -131,13 +131,13 @@
     <%
         } else {
     %>
-    <form action="reservationForm.jsp" method="get" onsubmit="return validateForm()">
+    <form action="<%=request.getContextPath()%>/ReservationAction.do" method="post" onsubmit="return validateForm()">
         <input type="hidden" name="restaurantId" value="<%=restaurant.getId()%>">
         <div class="mb-3">
             <label>날짜</label>
             <input type="date" id="dateInput" name="date" class="form-control"
                    min="<%=java.time.LocalDate.now()%>"
-                   onchange="filterTimeOptions(); checkAvailability()">
+                   onchange="filterTimeOptions()">
         </div>
         <div class="mb-3">
             <label>시간</label>
@@ -147,7 +147,7 @@
                 int startMinute     = Integer.parseInt(timeRange[0].split(":")[1]);
                 int endHour         = Integer.parseInt(timeRange[1].split(":")[0]);
                 if (startMinute > 0) startHour++;
-                
+
              // 오늘 날짜인 경우 현재 시간 이후만 표시
                 java.util.Calendar now = java.util.Calendar.getInstance();
                 int currentHour = now.get(java.util.Calendar.HOUR_OF_DAY);
@@ -174,7 +174,7 @@
         <%-- AJAX 결과 표시 --%>
         <div id="availabilityResult" class="mb-3"></div>
 
-        <button type="submit" id="submitBtn" class="btn btn-primary">예약 신청</button>
+        <button type="submit" id="submitBtn" class="btn btn-primary" disabled>예약 신청</button>
     </form>
     <%
         }

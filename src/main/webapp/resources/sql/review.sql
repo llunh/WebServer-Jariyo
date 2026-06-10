@@ -35,6 +35,3 @@ CREATE TABLE IF NOT EXISTS review_likes (
     FOREIGN KEY (user_id)   REFERENCES users(id)    ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
-show tables;
-
-select * from reviews;

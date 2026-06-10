@@ -37,10 +37,6 @@
   </filter-mapping>
   <filter-mapping>
     <filter-name>LoginFilter</filter-name>
-    <url-pattern>/reservationForm.jsp</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>LoginFilter</filter-name>
     <url-pattern>/ReservationAction.do</url-pattern>
   </filter-mapping>
   <filter-mapping>

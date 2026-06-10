@@ -12,13 +12,7 @@ create table reservations (
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
 );
 
-ALTER TABLE reservations MODIFY user_id INT NOT NULL;
-
-desc reservations;
-
-
 ALTER TABLE reservations DROP FOREIGN KEY reservations_ibfk_1;
 ALTER TABLE reservations ADD CONSTRAINT fk_reservations_user
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
     
-select * from reservations;

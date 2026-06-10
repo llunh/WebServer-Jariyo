@@ -64,7 +64,7 @@ public class RestaurantController extends HttpServlet {
         request.setAttribute("menus",      menus);
 
         // restaurantDetail.jsp로 포워딩 (리뷰, 관심식당 기능 포함)
-        RequestDispatcher rd = request.getRequestDispatcher("/restaurantDetail.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("/views/restaurant/detail.jsp");
         rd.forward(request, response);
     }
 }
