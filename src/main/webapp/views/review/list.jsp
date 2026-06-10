@@ -1,14 +1,10 @@
 <%@ page contentType="text/html; charset=utf-8"%>
-<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*"%>
 <%@ page import="mvc.model.ReviewDTO"%>
 <%@ page import="mvc.model.ReviewImageDTO"%>
 <%@ page import="mvc.model.ReviewLikeDAO"%>
 <%@ page import="mvc.model.UserDTO"%>
-
-<fmt:setLocale value="${lang}" />
-<fmt:setBundle basename="bundle.messages" />
 
 <%
     String  sessionId    = (String)  session.getAttribute("sessionId");
@@ -21,11 +17,11 @@
 <html>
 <head>
 <link rel="stylesheet" href="<c:url value='/resources/css/bootstrap.min.css'/>">
-<title><fmt:message key="review.list.title"/></title>
+<title>자리요 - 리뷰 목록</title>
 <script type="text/javascript">
     function checkLogin() {
         if ('<%=sessionId%>' === 'null' || '<%=sessionId%>' === '') {
-            alert('<fmt:message key="review.login.required"/>');
+            alert('로그인이 필요합니다.');
             location.href = '<c:url value="/MemberLoginForm.do"/>';
             return false;
         }
@@ -39,27 +35,21 @@
 
     <div class="p-5 mb-4 bg-body-tertiary rounded-3">
         <div class="container-fluid py-5">
-            <h1 class="display-5 fw-bold"><fmt:message key="review.list.heading"/></h1>
+            <h1 class="display-5 fw-bold">전체 리뷰</h1>
             <p class="col-md-8 fs-4">Zariyo Reviews</p>
         </div>
     </div>
 
-    <%-- 언어 전환 --%>
-    <div class="text-end mb-2">
-        <a href="?pageNum=<%=pageNum%>&lang=ko" class="btn btn-sm btn-outline-secondary">한국어</a>
-        <a href="?pageNum=<%=pageNum%>&lang=en" class="btn btn-sm btn-outline-secondary">English</a>
-    </div>
-
     <div class="text-end mb-2">
         <span class="badge text-bg-success">
-            <fmt:message key="review.total"/> <%=total_record%>건
+            전체 <%=total_record%>건
         </span>
     </div>
 
     <%
         if (reviewList == null || reviewList.isEmpty()) {
     %>
-        <div class="alert alert-info"><fmt:message key="review.empty"/></div>
+        <div class="alert alert-info">아직 작성된 리뷰가 없습니다.</div>
     <%
         } else {
             for (int j = 0; j < reviewList.size(); j++) {
@@ -77,7 +67,7 @@
                     <small class="text-muted"><%=review.getCreatedAt()%></small>
                 </div>
                 <p class="text-muted mb-2">
-                    <fmt:message key="review.by"/> <%=review.getUsername()%>
+                    작성자: <%=review.getUsername()%>
                 </p>
                 <p class="card-text"><%=review.getContent()%></p>
 
@@ -155,7 +145,7 @@
 
     <div class="py-3 text-end">
         <a href="#" onclick="checkLogin(); return false;" class="btn btn-primary">
-            &laquo; <fmt:message key="review.write.btn"/>
+            &laquo; 리뷰 작성하기
         </a>
     </div>
 </div>

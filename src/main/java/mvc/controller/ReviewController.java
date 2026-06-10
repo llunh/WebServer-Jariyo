@@ -79,15 +79,6 @@ public class ReviewController extends HttpServlet {
         if (request.getParameter("pageNum") != null)
             pageNum = Integer.parseInt(request.getParameter("pageNum"));
 
-        HttpSession session = request.getSession();
-        String lang = request.getParameter("lang");
-        if (lang != null && !lang.isEmpty()) {
-            session.setAttribute("lang", lang);
-        } else {
-            lang = (String) session.getAttribute("lang");
-            if (lang == null) lang = "ko";
-        }
-
         int                  total_record = dao.getReviewCount();
         ArrayList<ReviewDTO> reviewList   = dao.getReviewList(pageNum, limit);
 
@@ -101,7 +92,6 @@ public class ReviewController extends HttpServlet {
         request.setAttribute("total_page",   total_page);
         request.setAttribute("total_record", total_record);
         request.setAttribute("reviewList",   reviewList);
-        request.setAttribute("lang",         lang);
     }
 
     // 리뷰 저장 처리

@@ -111,7 +111,10 @@ public class MemberController extends HttpServlet {
 
         if (error != null) {
             request.setAttribute("error",    error);
-            request.setAttribute("username", username);
+            // 아이디 중복 오류일 때는 username을 비워 다시 입력하게 함
+            if (!"이미 사용 중인 아이디입니다.".equals(error)) {
+                request.setAttribute("username", username);
+            }
             request.setAttribute("email",    email);
             request.setAttribute("nickname", nickname);
             RequestDispatcher rd = request.getRequestDispatcher("/views/member/registerForm.jsp");
